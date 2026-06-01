@@ -74,6 +74,7 @@ export const theme: ThemeUserConfig = {
     /** Optional details about the social media accounts for this site. */
     social: [
       { icon: 'github', label: 'GitHub', href: 'https://github.com/Huazzi' },
+      { icon: 'email', label: 'Email', href: 'mailto:zzhua095@foxmail.com'},
       { icon: 'rss', label: 'RSS', href: '/rss.xml' }
     ]
   },
@@ -101,7 +102,7 @@ export const integ: IntegrationUserConfig = {
   // https://astro-pure.js.org/docs/integrations/links
   links: {
     // Friend logbook
-    logbook: [],
+    logbook: [{ date: '2025-01-17', content: '开始接纳新的伙伴！' }],
     // Yourself link info
     applyTip: [
       { name: 'Name', val: theme.title },
