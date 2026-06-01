@@ -2,20 +2,16 @@
   "friends": [
     {
       "id_name": "cf-links",
-      "desc": "Common links included in circle friends",
+      "desc": "小伙伴",
       "link_list": [
-        {
-          "name": "Arthals' ink",
-          "intro": "所见高山远木，阔云流风；所幸岁月盈余，了无拘束",
-          "link": "https://arthals.ink/",
-          "avatar": "https://cdn.arthals.ink/Arthals.png"
-        },
-        {
-          "name": "CWorld Site",
-          "intro": "求知若愚，虚怀若谷",
-          "link": "https://cworld0.com/",
-          "avatar": "https://cravatar.cn/avatar/1ffe42aa45a6b1444a786b1f32dfa8aa?s=200"
-        }
+        { "name": "InkCodes", "intro": "读书，学习，睡觉", "link": "https://inkcodes.com/", "avatar": "https://weavatar.com/avatar/53e97c1d70144099d065a94b7c0eb71c4f0b3e63bf82da230626abb4acee83b2" },
+        { "name": "Cloud", "intro": "写作即自由", "link": "https://www.cloudofficial.top/", "avatar": "https://raw.githubusercontent.com/cloud-oc/FileHub/refs/heads/main/root/Picture/Cloud.ico" },
+        { "name": "Leehow的小站", "intro": "Leehow的个人博客，好耶！", "link": "https://www.haoyep.com", "avatar": "https://www.haoyep.com/avatar.jpg" },
+        { "name": "wljay Blog", "intro": "wljay Blog", "link": "https://blog.wljay.cn/", "avatar": "" },
+        { "name": "Asteri5m的小破站", "intro": "别等时间不够的时候再后悔", "link": "https://asteri5m.icu/", "avatar": "https://asteri5m.icu/upload/20af907e-4769-4251-8e8c-0f0b52355380.png" },
+        { "name": "Class3的Space", "intro": "废墟中仍绽放希望", "link": "https://space.class3.fun/", "avatar": "https://space.class3.fun/upload/logo-new-1.png" },
+        { "name": "Arthals' ink", "intro": "所见高山远木，阔云流风；所幸岁月盈余，了无拘束", "link": "https://arthals.ink/", "avatar": "https://cdn.arthals.ink/Arthals.png" },
+        { "name": "CWorld Site", "intro": "求知若愚，虚怀若谷", "link": "https://cworld0.com/", "avatar": "https://cravatar.cn/avatar/1ffe42aa45a6b1444a786b1f32dfa8aa?s=200" }
       ]
     },
     {
@@ -25,15 +21,13 @@
     },
     {
       "id_name": "special-links",
-      "desc": "Other special links",
+      "desc": "推荐博客",
       "link_list": [
-        {
-          "name": "Astro",
-          "intro": "The web framework for content-driven websites",
-          "link": "https://astro.build/",
-          "avatar": "https://avatars.githubusercontent.com/u/44914786?s=200&v=4"
-        }
+        { "name": "安知鱼", "intro": "生活明朗，万物可爱", "link": "https://blog.anheyu.com/", "avatar": "https://npm.elemecdn.com/anzhiyu-blog-static@1.0.4/img/avatar.jpg" },
+        { "name": "张洪Heo", "intro": "分享设计与科技生活", "link": "https://blog.zhheo.com/", "avatar": "https://img.zhheo.com/i/67d8fa75943e4.webp" },
+        { "name": "Astro", "intro": "The web framework for content-driven websites", "link": "https://astro.build/", "avatar": "https://avatars.githubusercontent.com/u/44914786?s=200&v=4" }
       ]
     }
   ]
 }
+
