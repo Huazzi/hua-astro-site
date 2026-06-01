@@ -1,7 +1,7 @@
 import { rehypeHeadingIds } from '@astrojs/markdown-remark'
 import cloudflare from '@astrojs/cloudflare'
 import AstroPureIntegration from 'astro-pure'
-import { defineConfig, fontProviders } from 'astro/config'
+import { defineConfig, fontProviders, svgoOptimizer } from 'astro/config'
 import rehypeKatex from 'rehype-katex'
 import remarkMath from 'remark-math'
 
@@ -51,7 +51,10 @@ export default defineConfig({
     responsiveStyles: true,
     service: { entrypoint: 'astro/assets/services/sharp' },
     // domains: ['ghchart.rshah.org'],
-    remotePatterns: [{ protocol: 'https' }]
+    // Restrict remote image processing to avoid build-time fetching of
+    // external image hosts that may be unreachable during prerender.
+    // Empty array disables permissive remote pattern matching.
+    remotePatterns: []
   },
   // Enable font preloading and optimization
   // https://docs.astro.build/en/guides/fonts/
@@ -132,7 +135,7 @@ export default defineConfig({
     contentIntellisense: true,
     // Enable SVGO optimization for SVG assets
     // https://docs.astro.build/en/reference/experimental-flags/svg-optimization/
-    svgo: true,
+    svgOptimizer: svgoOptimizer(),
     // Enables pre-rendering your prefetched pages on the client in supported browsers.
     // https://docs.astro.build/en/reference/experimental-flags/client-prerender/
     clientPrerender: true,
