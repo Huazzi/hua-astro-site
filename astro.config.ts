@@ -1,5 +1,6 @@
-import { rehypeHeadingIds } from '@astrojs/markdown-remark'
+import { fileURLToPath } from 'node:url'
 import cloudflare from '@astrojs/cloudflare'
+import { rehypeHeadingIds } from '@astrojs/markdown-remark'
 import AstroPureIntegration from 'astro-pure'
 import { defineConfig, fontProviders, svgoOptimizer } from 'astro/config'
 import rehypeKatex from 'rehype-katex'
@@ -32,6 +33,34 @@ export default defineConfig({
   trailingSlash: 'never',
   // root: './my-project-directory',
   server: { host: true },
+  vite: {
+    optimizeDeps: {
+      exclude: ['astro-pure/utils'],
+      include: ['nth-check > boolbase', 'unified > extend']
+    },
+    resolve: {
+      alias: {
+        '@astro-pure/advanced': fileURLToPath(
+          new URL('./node_modules/astro-pure/components/advanced', import.meta.url)
+        ),
+        '@astro-pure/basic': fileURLToPath(
+          new URL('./node_modules/astro-pure/components/basic', import.meta.url)
+        ),
+        '@astro-pure/pages': fileURLToPath(
+          new URL('./node_modules/astro-pure/components/pages', import.meta.url)
+        ),
+        '@astro-pure/user': fileURLToPath(
+          new URL('./node_modules/astro-pure/components/user', import.meta.url)
+        )
+      }
+    },
+    ssr: {
+      optimizeDeps: {
+        exclude: ['astro-pure/utils'],
+        include: ['nth-check > boolbase', 'unified > extend']
+      }
+    }
+  },
   // https://docs.astro.build/en/guides/prefetch/
   prefetch: {
     // prefetchAll: true,

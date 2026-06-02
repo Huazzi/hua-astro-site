@@ -1,9 +1,11 @@
 ---
-import { BackToTop } from 'astro-pure/components/pages'
+import Button from '@astro-pure/user/Button.astro'
+import Icon from '@astro-pure/user/Icon.astro'
+
 import type { SiteMeta } from 'astro-pure/types'
-import { Button, Icon } from 'astro-pure/user'
 import { cn } from 'astro-pure/utils'
 import PageLayout from '@/layouts/BaseLayout.astro'
+import BackToTop from '@/components/pure/BackToTop.astro'
 import { integ } from '@/site-config'
 
 interface Props {

@@ -1,0 +1,13 @@
+---
+import { comment } from '../../comment.config'
+
+const provider = comment.provider
+const PageInfoComponent =
+  provider === 'waline'
+    ? (await import('../waline/PageInfo.astro')).default
+    : provider === 'twikoo'
+      ? (await import('../twikoo/PageInfo.astro')).default
+      : undefined
+---
+
+{PageInfoComponent && <PageInfoComponent {...Astro.props} />}

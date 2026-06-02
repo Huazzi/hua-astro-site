@@ -23,8 +23,19 @@
       "@/plugins/*": ["./src/plugins/*"],
       "@/pages/*": ["./src/pages/*"],
       "@/types": ["./src/types/index.ts"],
-      "@/site-config": ["./src/site.config.ts"]
+      "@/site-config": ["./src/site.config.ts"],
+      "@astro-pure/advanced/*": ["./node_modules/astro-pure/components/advanced/*"],
+      "@astro-pure/basic/*": ["./node_modules/astro-pure/components/basic/*"],
+      "@astro-pure/pages/*": ["./node_modules/astro-pure/components/pages/*"],
+      "@astro-pure/user/*": ["./node_modules/astro-pure/components/user/*"]
     }
   },
-  "exclude": ["./node_modules", "./**/node_modules/*", "./.vscode", "./dist", "./public/scripts/*", "./test/*"]
+  "exclude": [
+    "./node_modules",
+    "./**/node_modules/*",
+    "./.vscode",
+    "./dist",
+    "./public/scripts/*",
+    "./test/*"
+  ]
 }

@@ -1,9 +1,9 @@
 ---
 import type { MarkdownHeading } from 'astro'
+import TOC from '@astro-pure/pages/TOC.astro'
 
-import { TOC } from 'astro-pure/components/pages'
 import PageLayout from '@/layouts/ContentLayout.astro'
-import { Comment, PageInfo } from '@/components/waline'
+import { Comment, PageInfo } from '@/components/comment'
 
 interface Props {
   title: string

@@ -1,0 +1,82 @@
+---
+import { cn } from 'astro-pure/utils'
+
+import { comment } from '../../comment.config'
+
+const { class: className } = Astro.props
+const twikooConfig = comment.twikoo
+---
+
+{
+  comment.provider === 'twikoo' && twikooConfig.enable && (
+    <twikoo-comment>
+      <div id='tcomment' class={cn('not-prose', className)}>
+        Comment seems to stuck. Try to refresh?
+      </div>
+    </twikoo-comment>
+  )
+}
+
+<script
+  is:inline
+  define:vars={{ cdn: twikooConfig.cdn, envId: twikooConfig.envId, lang: twikooConfig.lang }}
+>
+  const getTwikoo = () => globalThis.twikoo
+
+  class TwikooComment extends HTMLElement {
+    connectedCallback() {
+      const el = this.querySelector('#tcomment')
+      if (!el) return
+
+      const initTwikoo = () => {
+        getTwikoo()?.init({
+          el,
+          envId,
+          lang,
+          path: window.location.pathname
+        })
+      }
+
+      if (getTwikoo()) {
+        initTwikoo()
+        return
+      }
+
+      const existingScript = document.querySelector(`script[data-twikoo-cdn="${cdn}"]`)
+
+      if (existingScript) {
+        existingScript.addEventListener('load', initTwikoo, { once: true })
+        return
+      }
+
+      const script = document.createElement('script')
+      script.src = cdn
+      script.async = true
+      script.dataset.twikooCdn = cdn
+      script.addEventListener('load', initTwikoo, { once: true })
+      script.addEventListener('error', () => {
+        console.error('Failed to load Twikoo script:', cdn)
+      })
+      document.head.append(script)
+    }
+  }
+
+  if (!customElements.get('twikoo-comment')) customElements.define('twikoo-comment', TwikooComment)
+</script>
+
+<style>
+  #tcomment {
+    color: hsl(var(--muted-foreground) / var(--un-text-opacity, 1));
+  }
+
+  #tcomment :global(a) {
+    color: hsl(var(--primary) / var(--un-text-opacity, 1));
+    overflow-wrap: anywhere;
+  }
+
+  #tcomment :global(.tk-content, .tk-nick, .tk-extra-text, .tk-preview-container) {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+</style>

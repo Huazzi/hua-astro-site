@@ -1,14 +1,17 @@
 ---
 import { Image } from 'astro:assets'
+import Quote from '@astro-pure/advanced/Quote.astro'
+import Button from '@astro-pure/user/Button.astro'
+import Card from '@astro-pure/user/Card.astro'
+import Icon from '@astro-pure/user/Icon.astro'
+import Label from '@astro-pure/user/Label.astro'
 
-import { Quote } from 'astro-pure/advanced'
-import { PostPreview } from 'astro-pure/components/pages'
 import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
-import { Button, Card, Icon, Label } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import ProjectCard from '@/components/home/ProjectCard.astro'
 import Section from '@/components/home/Section.astro'
 import SkillLayout from '@/components/home/SkillLayout.astro'
+import PostPreview from '@/components/pure/PostPreview.astro'
 import config from '@/site-config'
 
 const languages = ['Java', 'C', 'Python', 'C#']
@@ -47,12 +50,7 @@ if (!images[imagePath])
           <Label title='China'>
             <Icon name='location' class='size-5' slot='icon' />
           </Label>
-          <Label
-            title='Github'
-            as='a'
-            href='https://github.com/Huazzi'
-            target='_blank'
-          >
+          <Label title='Github' as='a' href='https://github.com/Huazzi' target='_blank'>
             <Icon name='github' class='size-5' slot='icon' />
           </Label>
         </div>

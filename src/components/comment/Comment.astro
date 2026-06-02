@@ -1,0 +1,13 @@
+---
+import { comment } from '../../comment.config'
+
+const provider = comment.provider
+const CommentComponent =
+  provider === 'waline'
+    ? (await import('../waline/Comment.astro')).default
+    : provider === 'twikoo'
+      ? (await import('../twikoo/Comment.astro')).default
+      : undefined
+---
+
+{CommentComponent && <CommentComponent {...Astro.props} />}

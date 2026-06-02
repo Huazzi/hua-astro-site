@@ -53,6 +53,17 @@ const renderContent = async (post: CollectionEntry<'blog'>, site: URL) => {
   return String(file)
 }
 
+/** Safely extract the hero image URL from a blog post's frontmatter. */
+const getHeroImageSrc = (
+  heroImage: CollectionEntry<'blog'>['data']['heroImage']
+): string => {
+  if (!heroImage) return ''
+  const src = heroImage.src
+  if (typeof src === 'string') return src
+  // ImageMetadata from Astro's image() schema helper
+  return src.src
+}
+
 const GET = async (context: AstroGlobal) => {
   const allPostsByDate = sortMDByDate(await getBlogCollection()) as CollectionEntry<'blog'>[]
   const siteUrl = context.site ?? new URL(import.meta.env.SITE)
@@ -68,14 +79,19 @@ const GET = async (context: AstroGlobal) => {
     description: config.description,
     site: import.meta.env.SITE,
     items: await Promise.all(
-      allPostsByDate.map(async (post) => ({
-        pubDate: post.data.publishDate,
-        link: `/blog/${post.id}`,
-        customData: `<h:img src="${typeof post.data.heroImage?.src === 'string' ? post.data.heroImage?.src : post.data.heroImage?.src.src}" />
-          <enclosure url="${typeof post.data.heroImage?.src === 'string' ? post.data.heroImage?.src : post.data.heroImage?.src.src}" />`,
-        content: await renderContent(post, siteUrl),
-        ...post.data
-      }))
+      allPostsByDate.map(async (post) => {
+        const heroSrc = getHeroImageSrc(post.data.heroImage)
+        return {
+          pubDate: post.data.publishDate,
+          link: `/blog/${post.id}`,
+          customData: heroSrc
+            ? `<h:img src="${heroSrc}" />
+          <enclosure url="${heroSrc}" />`
+            : '',
+          content: await renderContent(post, siteUrl),
+          ...post.data
+        }
+      })
     )
   })
 }

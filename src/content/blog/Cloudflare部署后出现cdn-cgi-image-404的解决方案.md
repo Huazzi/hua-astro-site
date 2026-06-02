@@ -7,6 +7,7 @@ tags:
   - "Astro"
   - "图片"
   - "部署"
+comment: true
 ---
 
 ## 问题现象

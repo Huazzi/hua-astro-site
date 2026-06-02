@@ -1,67 +1,68 @@
 ---
+import { cn } from 'astro-pure/utils'
 import config from '@/site-config'
 
-import '@waline/client/style'
-
-import { cn } from 'astro-pure/utils'
-
 const { class: className } = Astro.props
+const walineConfig = config.integ.waline
+const emoji = walineConfig.emoji?.map((preset) => `${config.npmCDN}/@waline/emojis@1.2.0/${preset}`)
 ---
 
 {
-  config.integ.waline.enable && (
+  walineConfig.enable && (
     <comment-component>
-      <div id='waline' class={cn('not-prose', className)}>
+      <link rel='stylesheet' href={`${config.npmCDN}/@waline/client@v3/dist/waline.css`} />
+      <div
+        id='waline'
+        class={cn('not-prose', className, walineConfig.showMeta && 'hide-meta')}
+        data-cdn={config.npmCDN}
+        data-server={walineConfig.server || ''}
+        data-emoji={JSON.stringify(emoji)}
+        data-additional-configs={JSON.stringify(walineConfig.additionalConfigs)}
+      >
         Comment seems to stuck. Try to refresh?✨
       </div>
     </comment-component>
   )
 }
 
-<script>
-  import { init as walineInit } from '@waline/client'
-  import type { WalineEmojiPresets } from '@waline/client'
-  import config from 'virtual:config'
-
-  const walineConfig = config.integ.waline
-
+<script is:inline type='module'>
   class Comment extends HTMLElement {
     constructor() {
       super()
     }
 
     connectedCallback() {
+      const el = this.querySelector('#waline')
+      if (!el) return
+
       // Prevent Vue log errors
-      ;(globalThis as unknown as { __VUE_OPTIONS_API__: boolean }).__VUE_OPTIONS_API__ = true
-      ;(globalThis as unknown as { __VUE_PROD_DEVTOOLS__: boolean }).__VUE_PROD_DEVTOOLS__ = false
-      ;(
-        globalThis as unknown as { __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: boolean }
-      ).__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false
+      globalThis.__VUE_OPTIONS_API__ = true
+      globalThis.__VUE_PROD_DEVTOOLS__ = false
+      globalThis.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false
 
-      const emoji = walineConfig.emoji?.map(
-        (preset) => `${config.npmCDN}/@waline/emojis@1.2.0/${preset}` as WalineEmojiPresets
-      )
+      const emoji = JSON.parse(el.dataset.emoji || 'null')
+      const additionalConfigs = JSON.parse(el.dataset.additionalConfigs || '{}')
 
-      walineInit({
-        el: 'comment-component #waline',
-        serverURL: walineConfig.server || '',
-        emoji,
-        reaction: ['/icons/heart-item.svg'],
-        ...walineConfig.additionalConfigs
+      import(`${el.dataset.cdn}/@waline/client@v3`).then(({ init: walineInit }) => {
+        walineInit({
+          el,
+          serverURL: el.dataset.server || '',
+          emoji,
+          reaction: ['/icons/heart-item.svg'],
+          ...additionalConfigs
+        })
       })
     }
   }
 
-  if (walineConfig.enable) customElements.define('comment-component', Comment)
+  if (!customElements.get('comment-component')) customElements.define('comment-component', Comment)
 </script>
 
-{
-  config.integ.waline.showMeta &&(
-    <style> #waline :global(.wl-meta) { display: none; } </style>
-  )
-}
-
 <style>
+  #waline.hide-meta :global(.wl-meta) {
+    display: none;
+  }
+
   /* Basic theme */
   #waline {
     /* Font size */
