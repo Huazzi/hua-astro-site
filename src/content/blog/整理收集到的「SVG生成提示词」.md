@@ -1,4 +1,7 @@
 ---
+slug: "191320"
+aliases:
+  - 整理收集到的svg生成提示词
 title: "整理收集到的「SVG生成提示词」"
 description: "整理收集到的「SVG生成提示词」"
 publishDate: "2025-03-17"

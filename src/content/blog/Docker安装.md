@@ -1,4 +1,7 @@
 ---
+slug: "131716"
+aliases:
+  - docker安装
 title: "Docker安装"
 description: "Docker安装"
 publishDate: "2025-04-10"

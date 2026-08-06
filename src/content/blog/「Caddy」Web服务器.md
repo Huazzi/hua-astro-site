@@ -1,4 +1,7 @@
 ---
+slug: "462063"
+aliases:
+  - caddyweb服务器
 title: "「Caddy」Web服务器"
 description: "「Caddy」Web服务器"
 publishDate: "2025-04-10"

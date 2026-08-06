@@ -1,4 +1,7 @@
 ---
+slug: "756305"
+aliases:
+  - solution-ubuntu虚拟机无法连接网络
 title: "Ubuntu虚拟机无法连接网络的「Solution」"
 description: "Ubuntu虚拟机无法连接网络的「Solution」"
 publishDate: "2025-05-28"

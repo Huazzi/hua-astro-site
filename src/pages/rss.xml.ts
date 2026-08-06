@@ -8,14 +8,30 @@ import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import { unified } from 'unified'
 import { visit } from 'unist-util-visit'
+import config from 'virtual:config'
 
 import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
-import config from 'virtual:config'
 
 // Get dynamic import of images as a map collection
 const imagesGlob = import.meta.glob<{ default: ImageMetadata }>(
   '/src/content/blog/**/*.{jpeg,jpg,png,gif,avif,webp}' // add more image formats if needed
 )
+
+const getLocalImagePath = (post: CollectionEntry<'blog'>, imageUrl: string) => {
+  if (!post.filePath || !imageUrl.startsWith('.')) return undefined
+
+  const sourceDirectory = post.filePath.replaceAll('\\', '/').replace(/\/[^/]+$/, '')
+  const segments = `${sourceDirectory}/${imageUrl}`.split('/')
+  const normalizedSegments: string[] = []
+
+  for (const segment of segments) {
+    if (!segment || segment === '.') continue
+    if (segment === '..') normalizedSegments.pop()
+    else normalizedSegments.push(segment)
+  }
+
+  return `/${normalizedSegments.join('/')}`
+}
 
 const renderContent = async (post: CollectionEntry<'blog'>, site: URL) => {
   // Replace image links with the correct path
@@ -29,8 +45,10 @@ const renderContent = async (post: CollectionEntry<'blog'>, site: URL) => {
         if (node.url.startsWith('/images')) {
           node.url = `${site}${node.url.replace('/', '')}`
         } else {
-          const imagePathPrefix = `/src/content/blog/${post.id}/${node.url.replace('./', '')}`
-          const promise = imagesGlob[imagePathPrefix]?.().then(async (res) => {
+          const localImagePath = getLocalImagePath(post, node.url)
+          if (!localImagePath) return
+
+          const promise = imagesGlob[localImagePath]?.().then(async (res) => {
             const imagePath = res?.default
             if (imagePath) {
               node.url = `${site}${(await getImage({ src: imagePath })).src.replace('/', '')}`
@@ -54,9 +72,7 @@ const renderContent = async (post: CollectionEntry<'blog'>, site: URL) => {
 }
 
 /** Safely extract the hero image URL from a blog post's frontmatter. */
-const getHeroImageSrc = (
-  heroImage: CollectionEntry<'blog'>['data']['heroImage']
-): string => {
+const getHeroImageSrc = (heroImage: CollectionEntry<'blog'>['data']['heroImage']): string => {
   if (!heroImage) return ''
   const src = heroImage.src
   if (typeof src === 'string') return src

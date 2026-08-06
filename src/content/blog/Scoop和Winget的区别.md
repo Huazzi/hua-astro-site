@@ -1,4 +1,7 @@
 ---
+slug: "345296"
+aliases:
+  - scoop和winget的区别
 title: "Scoop和Winget的区别"
 description: "Scoop和Winget的区别"
 publishDate: "2025-03-01"

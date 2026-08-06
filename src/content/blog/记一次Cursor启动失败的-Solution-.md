@@ -1,4 +1,7 @@
 ---
+slug: "516548"
+aliases:
+  - 记一次cursor启动失败的-solution-
 title: "记一次Cursor启动失败的「Solution」"
 description: "记一次Cursor启动失败的「Solution」"
 publishDate: "2025-05-25"

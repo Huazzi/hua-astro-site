@@ -1,4 +1,7 @@
 ---
+slug: "388556"
+aliases:
+  - cloudflare部署后出现cdn-cgi-image-404的解决方案
 title: "Cloudflare部署后出现cdn-cgi-image 404的解决方案"
 description: "记录 Astro 项目部署到 Cloudflare 后，浏览器控制台出现 /cdn-cgi/image/... 404 的原因和修复方式"
 publishDate: "2026-06-02"

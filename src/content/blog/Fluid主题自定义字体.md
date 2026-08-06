@@ -1,4 +1,7 @@
 ---
+slug: "356422"
+aliases:
+  - fluid主题自定义字体
 title: "Fluid主题自定义字体"
 description: "Fluid主题自定义字体"
 publishDate: "2025-01-01"

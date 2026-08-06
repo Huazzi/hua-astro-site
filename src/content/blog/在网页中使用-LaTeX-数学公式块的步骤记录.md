@@ -1,4 +1,7 @@
 ---
+slug: "613138"
+aliases:
+  - 在网页中使用-latex-数学公式块的步骤记录
 title: "在网页中使用 LaTeX 数学公式块的步骤记录"
 description: "在网页中使用 LaTeX 数学公式块的步骤记录"
 publishDate: "2025-04-29"

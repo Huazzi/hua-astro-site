@@ -1,4 +1,7 @@
 ---
+slug: "757873"
+aliases:
+  - fluid主题背景图全屏化与切换
 title: "Fluid主题背景图全屏化与切换"
 description: "Fluid主题背景图全屏化与切换"
 publishDate: "2025-03-01"

@@ -1,4 +1,7 @@
 ---
+slug: "633853"
+aliases:
+  - git忽略文件失效解决方案
 title: "Git忽略文件失效解决方案"
 description: "Git忽略文件失效可能的解决方案"
 publishDate: "2026-5-18"

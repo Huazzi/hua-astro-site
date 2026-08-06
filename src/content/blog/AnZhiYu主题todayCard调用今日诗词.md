@@ -1,4 +1,7 @@
 ---
+slug: "784825"
+aliases:
+  - anzhiyu主题todaycard调用今日诗词
 title: "AnZhiYu主题todayCard调用今日诗词"
 description: "AnZhiYu主题todayCard调用今日诗词"
 publishDate: "2025-03-23"

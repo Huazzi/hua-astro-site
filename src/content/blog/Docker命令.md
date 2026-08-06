@@ -1,4 +1,7 @@
 ---
+slug: "101480"
+aliases:
+  - docker命令
 title: "Docker命令"
 description: "Docker命令"
 publishDate: "2025-04-10"
