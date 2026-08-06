@@ -1,4 +1,7 @@
 ---
+slug: "402147"
+aliases:
+  - 面向ai爱好者的prompt工程实用指南
 title: "面向AI爱好者的Prompt工程实用指南"
 description: "面向AI爱好者的Prompt工程实用指南"
 publishDate: "2025-04-10"

@@ -1,4 +1,7 @@
 ---
+slug: "592108"
+aliases:
+  - git图形化工具lazygit
 title: "Git图形化工具「lazygit」"
 description: "Git图形化工具「lazygit」"
 publishDate: "2025-01-29"

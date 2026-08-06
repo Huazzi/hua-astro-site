@@ -1,4 +1,7 @@
 ---
+slug: "339994"
+aliases:
+  - windows包管理工具scoop
 title: "Windows包管理工具「Scoop」"
 description: "Windows包管理工具「Scoop」"
 publishDate: "2025-01-29"

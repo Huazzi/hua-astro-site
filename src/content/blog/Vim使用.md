@@ -1,4 +1,7 @@
 ---
+slug: "760275"
+aliases:
+  - vim使用
 title: "Vim使用"
 description: "Vim使用"
 publishDate: "2025-05-22"

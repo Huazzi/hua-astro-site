@@ -1,4 +1,7 @@
 ---
+slug: "910354"
+aliases:
+  - 意外之喜crossfire
 title: "意外之喜—「CrossFire」"
 description: "意外之喜—「CrossFire」"
 publishDate: "2024-12-26"

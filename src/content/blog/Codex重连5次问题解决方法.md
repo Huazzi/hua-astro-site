@@ -1,4 +1,7 @@
 ---
+slug: "223986"
+aliases:
+  - codex重连5次问题解决方法
 title: '解决 Codex 反复重连 5 次的问题'
 description: '通过 Proxifier 为 Codex 指定 SOCKS5 代理，解决反复重连的问题。'
 publishDate: '2026-08-03'

@@ -1,4 +1,7 @@
 ---
+slug: "572366"
+aliases:
+  - typora美化
 title: "Typora美化"
 description: "Typora美化"
 publishDate: "2025-02-21"

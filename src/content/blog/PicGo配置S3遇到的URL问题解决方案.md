@@ -1,4 +1,7 @@
 ---
+slug: "379371"
+aliases:
+  - picgo配置s3遇到的url问题解决方案
 title: "PicGo配置S3遇到的URL问题解决方案"
 description: "PicGo配置S3遇到的URL问题解决方案"
 publishDate: "2025-03-14"

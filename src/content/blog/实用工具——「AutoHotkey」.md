@@ -1,4 +1,7 @@
 ---
+slug: "577759"
+aliases:
+  - 实用工具autohotkey
 title: "效率工具「AutoHotkey」"
 description: "效率工具「AutoHotkey」"
 publishDate: "2024-12-31"

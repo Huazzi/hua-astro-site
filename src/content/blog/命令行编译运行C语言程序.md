@@ -1,4 +1,7 @@
 ---
+slug: "446972"
+aliases:
+  - 命令行编译运行c语言程序
 title: "WSL编译运行C语言程序"
 description: "WSL编译运行C语言程序"
 publishDate: "2025-01-23"

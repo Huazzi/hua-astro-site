@@ -1,4 +1,7 @@
 ---
+slug: "144493"
+aliases:
+  - win11中无法访问wsl-localhost的解决方案
 title: "Win11中无法访问wsl.localhost的解决方案"
 description: "Win11中无法访问wsl.localhost的解决方案"
 publishDate: "2025-01-23"

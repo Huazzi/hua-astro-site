@@ -3,19 +3,20 @@
   "type": "module",
   "version": "4.1.4",
   "scripts": {
-    "dev": "astro dev",
-    "dev:check": "astro check --watch & astro dev",
-    "build": "astro-pure check && astro check && astro build",
+    "dev": "bun run permalinks && astro dev",
+    "dev:check": "bun run permalinks && (astro check --watch & astro dev)",
+    "build": "bun run permalinks && astro-pure check && astro check && astro build",
     "preview": "astro preview",
-    "sync": "astro sync",
-    "check": "astro check",
+    "sync": "bun run permalinks && astro sync",
+    "check": "bun run permalinks && astro check",
     "astro": "astro",
     "pure": "astro-pure",
     "format": "prettier --write  '**/*.{js,jsx,ts,tsx,md,mdx,astro}'",
     "lint": "eslint --fix 'src/**/*.{js,ts,jsx,tsx,astro}'",
     "yijiansilian": "bun lint && bun sync && bun check && bun format",
     "clean": "node -e \"const fs=require('fs');['.astro','.vercel','dist'].forEach(d=>fs.rmSync(d,{recursive:true,force:true}));\"",
-    "cache:avatars": "tsx preset/scripts/cacheAvatars.ts"
+    "cache:avatars": "tsx preset/scripts/cacheAvatars.ts",
+    "permalinks": "node scripts/blog-permalinks.mjs"
   },
   "dependencies": {
     "@astrojs/check": "0.9.8",
@@ -36,7 +37,9 @@
     "@typescript-eslint/parser": "^8.59.0",
     "eslint": "^10.2.1",
     "eslint-plugin-astro": "^1.7.0",
+    "github-slugger": "^2.0.0",
     "prettier": "^3.8.3",
-    "prettier-plugin-astro": "^0.14.1"
+    "prettier-plugin-astro": "^0.14.1",
+    "yaml": "^2.9.0"
   }
 }

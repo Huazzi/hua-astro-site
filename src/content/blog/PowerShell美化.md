@@ -1,4 +1,7 @@
 ---
+slug: "254118"
+aliases:
+  - powershell美化
 title: "PowerShell美化"
 description: "PowerShell美化"
 publishDate: "2025-03-01"

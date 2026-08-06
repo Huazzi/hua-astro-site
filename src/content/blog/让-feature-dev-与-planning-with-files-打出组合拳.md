@@ -1,4 +1,7 @@
 ---
+slug: "380701"
+aliases:
+  - 让-feature-dev-与-planning-with-files-打出组合拳
 title: "让 feature-dev 与 planning-with-files 打出组合拳"
 description: "记录 feature-dev 与 planning-with-files 的协作方式：用结构化开发流程配合文件化计划，解决 Agent 长任务中的上下文丢失和跨会话恢复问题。"
 publishDate: "2026-07-09"

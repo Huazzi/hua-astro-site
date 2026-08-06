@@ -1,4 +1,7 @@
 ---
+slug: "598999"
+aliases:
+  - wsl上的ai使用chrome-devtools
 title: "WSL2 里的 AI 实现直接控制 Windows Chrome的方法"
 description: "别被环境隔离骗了：WSL2 里的 AI，照样能直接控制 Windows Chrome"
 publishDate: "2025-05-22"

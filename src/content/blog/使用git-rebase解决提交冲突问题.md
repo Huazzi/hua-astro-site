@@ -1,4 +1,7 @@
 ---
+slug: "753769"
+aliases:
+  - 使用git-rebase解决提交冲突问题
 title: "使用git-rebase解决提交冲突问题"
 description: "使用git-rebase解决提交冲突问题"
 publishDate: "2025-05-25"

@@ -1,4 +1,7 @@
 ---
+slug: "152931"
+aliases:
+  - mysql安装多版本与版本切换
 title: "MySQL安装多版本与版本切换"
 description: "MySQL安装多版本与版本切换"
 publishDate: "2025-02-28"

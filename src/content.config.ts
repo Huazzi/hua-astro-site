@@ -12,7 +12,16 @@ function removeDupsAndLowerCase(array: string[]) {
 // Define blog collection
 const blog = defineCollection({
   // Load Markdown and MDX files in the `src/content/blog/` directory.
-  loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
+  loader: glob({
+    base: './src/content/blog',
+    pattern: '**/*.{md,mdx}',
+    generateId: ({ data, entry }) => {
+      if (typeof data.slug !== 'string' || !/^\d{6}$/.test(data.slug)) {
+        throw new Error(`Blog post ${entry} must define a quoted 6-digit slug`)
+      }
+      return data.slug
+    }
+  }),
   // Required
   schema: ({ image }) =>
     z.object({
@@ -37,7 +46,9 @@ const blog = defineCollection({
       language: z.string().optional(),
       draft: z.boolean().default(false),
       // Special fields
-      comment: z.boolean().default(true)
+      comment: z.boolean().default(true),
+      // Previous public URLs kept as permanent redirects.
+      aliases: z.array(z.string()).default([])
     })
 })
 
