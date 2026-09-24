@@ -8,7 +8,7 @@ import Label from '@astro-pure/user/Label.astro'
 
 import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
 import PageLayout from '@/layouts/BaseLayout.astro'
-import ProjectCard from '@/components/home/ProjectCard.astro'
+import FieldNote from '@/components/home/FieldNote.astro'
 import Section from '@/components/home/Section.astro'
 import SkillLayout from '@/components/home/SkillLayout.astro'
 import PostPreview from '@/components/pure/PostPreview.astro'
@@ -33,51 +33,52 @@ if (!images[imagePath])
   )
 ---
 
-<PageLayout meta={{ title: 'Home' }} highlightColor='#06392f'>
-  <main class='flex w-full flex-col items-center'>
-    <section class='animate mb-10 flex flex-col items-center gap-y-7' id='content-header'>
-      <Image
-        src={images[imagePath]()}
-        alt={config.logo.alt || 'Profile'}
-        class='h-28 w-auto rounded-full border p-1'
-        loading='eager'
-        fetchpriority='high'
-      />
-
-      <div class='flex flex-col items-center gap-y-4'>
-        <h1 class='text-3xl font-medium'>{config.author}</h1>
-        <div class='flex flex-wrap justify-center gap-x-7 gap-y-3'>
-          <Label title='China'>
-            <Icon name='location' class='size-5' slot='icon' />
-          </Label>
-          <Label title='Github' as='a' href='https://github.com/Huazzi' target='_blank'>
+<PageLayout meta={{ title: 'Home' }}>
+  <main class='w-full'>
+    <section class='home-hero animate' id='content-header'>
+      <div class='hero-copy'>
+        <p class='eyebrow'>HUAZZI / PERSONAL NOTES</p>
+        <div class='flex items-center gap-4'>
+          <Image
+            src={images[imagePath]()}
+            alt={config.logo.alt || 'Huazzi 的头像'}
+            class='h-14 w-14 rounded-full border border-border p-1'
+            loading='eager'
+            fetchpriority='high'
+          />
+          <span class='text-sm text-muted-foreground'>你好，我是 {config.author}</span>
+        </div>
+        <h1>把有价值的发现，<br /><em>认真记下来。</em></h1>
+        <p class='hero-description'>一名正在成长的开发者。在这里记录技术实践、遇到的问题，以及生活中的一些发现。</p>
+        <div class='hero-actions'>
+          <a class='hero-link' href='/blog'>阅读文章 <span aria-hidden='true'>↗</span></a>
+          <a class='text-link' href='/about'>了解我 <span aria-hidden='true'>→</span></a>
+        </div>
+        <div class='hero-meta'>
+          <Label title='China'><Icon name='location' class='size-5' slot='icon' /></Label>
+          <Label title='Github' as='a' href='https://github.com/Huazzi' target='_blank' rel='noopener noreferrer'>
             <Icon name='github' class='size-5' slot='icon' />
           </Label>
         </div>
       </div>
+      <FieldNote />
     </section>
-    <div id='content' class='animate flex flex-col gap-y-10 md:w-4/5 lg:w-5/6'>
-      <Section title='About'>
-        <p class='text-muted-foreground'>Developer</p>
-        <p class='text-muted-foreground'>
-          A student of Zhengzhou University. Here are some things what I want to record.
-        </p>
-        <Button title='More about me' class='w-fit self-end' href='/about' variant='ahead' />
-      </Section>
+    <div id='content' class='animate mx-auto flex max-w-5xl flex-col gap-y-16'>
       {
         allPostsByDate.length > 0 && (
-          <Section title='Posts'>
-            <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
-              {allPostsByDate.map((p) => (
-                <li class='flex flex-col gap-x-2 sm:flex-row'>
-                  <PostPreview post={p} />
-                </li>
-              ))}
+          <Section title='最近写下' class='home-posts'>
+            <p class='text-sm text-muted-foreground'>从最新的问题开始，翻阅最近的记录。</p>
+            <ul class='flex flex-col gap-y-2'>
+              {allPostsByDate.map((p) => <PostPreview post={p} />)}
             </ul>
-            <Button title='More posts' class='w-fit self-end' href='/blog' variant='ahead' />
+            <Button title='查看所有文章' class='w-fit self-end' href='/blog' variant='ahead' />
           </Section>
         )
       }
+      <Section title='关于我'>
+        <p class='text-muted-foreground'>喜欢编程、跑步、吹晚风和看日落。</p>
+        <Button title='更多关于我' class='w-fit self-end' href='/about' variant='ahead' />
+      </Section>
 
       {
         /* <Section title='Experience'>
@@ -108,7 +109,7 @@ if (!images[imagePath])
       />
     </Section> */
       }
-      <Section title='Education'>
+      <Section title='教育经历'>
         <Card
           as='a'
           heading='郑州大学'
@@ -119,6 +120,8 @@ if (!images[imagePath])
           <img
             class='absolute end-0 z-0 m-0 -my-3 h-full w-1/2 object-cover opacity-40'
             src='/images/ZZU.png'
+            alt=''
+            loading='lazy'
           />
         </Card>
       </Section>
@@ -162,13 +165,92 @@ if (!images[imagePath])
         />
       </Section> -->
 
-      <Section title='Skills'>
+      <Section title='使用的工具'>
         <SkillLayout title='Languages' skills={languages} />
         <SkillLayout title='Frontend' skills={frontend} />
         <SkillLayout title='Backend' skills={backend} />
         <SkillLayout title='Tools' skills={developmentTools} />
       </Section>
     </div>
-    <Quote class='mt-12' />
+    <div class='mt-12 flex justify-center'>
+      <Quote />
+    </div>
   </main>
 </PageLayout>
+
+<style>
+  .home-hero {
+    display: grid;
+    align-items: center;
+    grid-template-columns: 1fr 0.95fr;
+    gap: clamp(2rem, 6vw, 5rem);
+    min-height: 490px;
+    margin: 1rem auto 5rem;
+    max-width: 68rem;
+  }
+  .eyebrow {
+    color: hsl(var(--primary));
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+  }
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(2.9rem, 5.1vw, 5.1rem);
+    letter-spacing: -0.05em;
+    line-height: 1.24;
+  }
+  h1 em {
+    color: hsl(var(--primary));
+    font-weight: 400;
+  }
+  .hero-description {
+    max-width: 30rem;
+    color: hsl(var(--muted-foreground));
+    font-size: 1.06rem;
+    line-height: 1.9;
+  }
+  .hero-actions,
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .hero-meta {
+    padding-top: 0.4rem;
+    font-size: 0.85rem;
+  }
+  .hero-link {
+    display: inline-flex;
+    min-height: 3rem;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.55rem 1.4rem;
+    background: hsl(var(--foreground));
+    color: hsl(var(--background));
+    border-radius: 31px 23px 28px 20px / 23px 30px 20px 29px;
+    transition: background 0.5s ease, transform 0.5s ease;
+  }
+  .hero-link:hover {
+    background: hsl(var(--primary));
+    color: hsl(var(--background));
+    transform: translateY(2px);
+  }
+  .text-link {
+    padding: 0.6rem;
+    border-bottom: 1px solid hsl(var(--border));
+  }
+  @media (max-width: 760px) {
+    .home-hero {
+      grid-template-columns: 1fr;
+      gap: 0;
+      margin-bottom: 3rem;
+    }
+  }
+</style>

@@ -23,19 +23,19 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
   heroImage && (
     <div class='hero-image relative mb-6'>
       <Image
+        {...heroImage}
         alt={heroImage.alt || title}
-        class='cover-image relative z-10 h-auto w-full max-w-[65ch] rounded-2xl object-contain'
+        class='cover-image relative z-10 h-auto w-full max-w-[65ch] object-contain'
         fetchpriority='high'
         loading='eager'
-        {...heroImage}
       />
       <Image
-        alt='Blur image'
-        fetchpriority='high'
-        loading='eager'
+        {...heroImage}
+        alt=''
+        aria-hidden='true'
+        loading='lazy'
         id='blurImage'
         class='absolute end-0 top-4 z-0 mt-0 h-full max-w-[65ch] rounded-3xl opacity-60 transition-opacity duration-300'
-        {...heroImage}
       />
     </div>
   )
@@ -98,7 +98,7 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
     }
   </div>
 
-  <h1 class='mt-4 text-2xl font-medium sm:mb-2 sm:mt-6 sm:text-3xl'>
+  <h1 class='mt-4 text-3xl sm:mb-2 sm:mt-6 sm:text-4xl'>
     {title}
   </h1>
 
@@ -133,6 +133,9 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 </script>
 
 <style>
+  .cover-image {
+    border-radius: var(--organic-radius);
+  }
   #blurImage {
     --un-blur: blur(24px);
     filter: var(--un-blur);

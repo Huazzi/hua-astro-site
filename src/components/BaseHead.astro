@@ -29,11 +29,6 @@ const socialImageURL = new URL(ogImage ? ogImage : config.socialCard, Astro.url)
 
 {/* Font preloads */}
 <Font cssVariable='--font-satoshi' preload={[{ subset: 'latin', style: 'normal' }]} />
-<style>
-  body {
-    font-family: var(--font-satoshi);
-  }
-</style>
 
 {/* Canonical URL */}
 <link rel='canonical' href={canonicalURL} />

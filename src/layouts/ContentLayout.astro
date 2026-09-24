@@ -35,7 +35,7 @@ const { meta, highlightColor, back = '/', ...props } = Astro.props
     >
     </div>
 
-    <article class='min-w-0 grow'>
+    <article class='min-w-0 grow content-article'>
       {/* Content header */}
       <div id='content-header' class='animate'>
         <slot name='header' />
@@ -45,7 +45,7 @@ const { meta, highlightColor, back = '/', ...props } = Astro.props
       <div
         id='content'
         class={cn(
-          'max-w-none animate mt-8 md:min-w-[45ch] overflow-x-hidden',
+          'max-w-none animate mt-8 md:min-w-[45ch]',
           integ.typography.class
         )}
       >
@@ -103,6 +103,9 @@ const { meta, highlightColor, back = '/', ...props } = Astro.props
   })
 </script>
 <style>
+  .content-article {
+    max-width: 48rem;
+  }
   @media (min-width: 769px) {
     #sidebar-shade {
       display: none !important;

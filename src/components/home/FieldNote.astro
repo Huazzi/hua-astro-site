@@ -1,0 +1,93 @@
+---
+
+---
+
+<div class='field-note' aria-hidden='true'>
+  <div class='note-page'>
+    <span class='note-label'>HUAZZI · FIELD NOTES</span>
+    <svg viewBox='0 0 360 390' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <path
+        d='M170 336C183 276 169 222 190 166C204 129 231 96 254 67'
+        stroke='currentColor'
+        stroke-width='2.5'
+        stroke-linecap='round'></path>
+      <path
+        d='M181 261C147 218 123 188 80 174M186 220C224 202 251 174 270 139M191 165C165 139 150 106 146 68'
+        stroke='currentColor'
+        stroke-width='2'
+        stroke-linecap='round'></path>
+      <path
+        d='M78 174C81 137 52 125 27 134C29 161 50 178 78 174ZM146 68C117 66 106 42 118 17C144 25 153 44 146 68ZM254 67C255 37 278 20 305 26C306 54 286 72 254 67ZM270 139C293 115 319 120 333 140C316 164 293 160 270 139ZM180 262C145 252 120 265 112 292C141 305 166 294 180 262Z'
+        fill='var(--leaf)'
+        stroke='currentColor'
+        stroke-width='1.5'></path>
+      <path
+        d='M78 174L42 145M146 68L126 31M254 67L291 36M270 139L317 140M180 262L127 287'
+        stroke='var(--paper)'
+        stroke-width='1.5'
+        stroke-linecap='round'></path>
+      <path d='M63 336H297' stroke='currentColor' stroke-opacity='.24'></path>
+      <circle cx='65' cy='354' r='3' fill='var(--clay)'></circle>
+      <path d='M80 354H198' stroke='currentColor' stroke-opacity='.24'></path>
+    </svg>
+    <span class='note-footer'>一些关于技术与生活的记录</span>
+  </div>
+</div>
+
+<style>
+  .field-note {
+    position: relative;
+    display: grid;
+    min-height: 370px;
+    place-items: center;
+  }
+  .field-note::before {
+    content: '';
+    position: absolute;
+    inset: 8% 3%;
+    background: hsl(var(--muted));
+    border-radius: 39% 61% 57% 43% / 49% 38% 62% 51%;
+    transform: rotate(-9deg);
+  }
+  .note-page {
+    position: relative;
+    display: flex;
+    width: min(82%, 360px);
+    flex-direction: column;
+    padding: 1.25rem 1.4rem;
+    color: hsl(var(--foreground));
+    background: var(--paper);
+    border: 1px solid hsl(var(--border));
+    border-radius: 4px 18px 5px 12px;
+    box-shadow: 14px 18px 0 hsl(var(--foreground) / 0.07);
+    transform: rotate(4deg);
+  }
+  .note-label,
+  .note-footer {
+    font-size: 0.66rem;
+    letter-spacing: 0.12em;
+  }
+  .note-label {
+    color: hsl(var(--primary));
+  }
+  .note-footer {
+    align-self: flex-end;
+    color: hsl(var(--muted-foreground));
+  }
+  svg {
+    width: 100%;
+    max-height: 290px;
+  }
+  @media (max-width: 640px) {
+    .field-note {
+      min-height: 260px;
+    }
+    .note-page {
+      width: min(70%, 240px);
+      padding: 0.75rem 1rem;
+    }
+    svg {
+      max-height: 190px;
+    }
+  }
+</style>
