@@ -1,13 +1,12 @@
 ---
 import { Font } from 'astro:assets'
-
 import { prod } from 'astro-pure/server'
 import type { SiteMeta } from 'astro-pure/types'
 import config from 'virtual:config'
 
-type Props = SiteMeta
+type Props = SiteMeta & { modifiedDate?: string }
 
-const { articleDate, description, ogImage, title } = Astro.props
+const { articleDate, modifiedDate, description, ogImage, title } = Astro.props
 
 const siteTitle = `${title} ${config.titleDelimiter} ${config.title}`
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
@@ -57,6 +56,7 @@ const socialImageURL = new URL(ogImage ? ogImage : config.socialCard, Astro.url)
     <>
       <meta content={config.author} property='article:author' />
       <meta content={articleDate} property='article:published_time' />
+      {modifiedDate && <meta content={modifiedDate} property='article:modified_time' />}
     </>
   )
 }

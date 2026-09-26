@@ -1,6 +1,6 @@
 # Huazzi Site
 
-我的个人博客，使用 Astro 构建，所使用模版为 Astro Theme Pure。
+我的个人博客，使用 Astro 构建，参考模版 Astro Theme Pure。
 
 欢迎访问 Huazzi's Site！
 

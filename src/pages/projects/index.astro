@@ -157,13 +157,15 @@ const headings = [
   />
   <!-- <p>Global methods: <a href="https://ko-fi.com/cworld0" target="_blank">Ko-fi</a> </p> -->
   <p>
-    请赞助后留言或主动联系我。我的邮箱是：
-    <code
-      style='cursor: pointer'
-      onclick='const m=atob(this.textContent);alert(m);window.open(`mailto:${m}`,"_blank")'
-      >enpodWEwOTVAZm94bWFpbC5jb20=</code
+    请赞助后留言或主动联系我。
+    <button
+      id='copy-email'
+      type='button'
+      class='rounded-sm'
+      data-email='enpodWEwOTVAZm94bWFpbC5jb20='>显示并复制邮箱</button
     >
-    (点击代码进行 Base64 转换)。
+    <code id='email-address' hidden></code>
+    <span id='email-status' role='status' aria-live='polite'></span>
   </p>
   <Sponsors
     progressMax={50}
@@ -173,22 +175,21 @@ const headings = [
   />
 </PageLayout>
 
-<style>
-  .sponsorship-card {
-    & .sponsorship-card-img {
-      opacity: 0.3;
-      --un-blur: blur(4px);
-      filter: var(--un-blur);
+<script>
+  const emailButton = document.getElementById('copy-email') as HTMLButtonElement | null
+  const emailAddress = document.getElementById('email-address')
+  const emailStatus = document.getElementById('email-status')
+  emailButton?.addEventListener('click', async () => {
+    const address = atob(emailButton.dataset.email ?? '')
+    if (emailAddress) {
+      emailAddress.textContent = address
+      emailAddress.hidden = false
     }
-
-    &:hover {
-      & .sponsorship-card-icon {
-        opacity: 0;
-      }
-      & .sponsorship-card-img {
-        opacity: 1;
-        --un-blur: blur(0);
-      }
+    try {
+      await navigator.clipboard.writeText(address)
+      if (emailStatus) emailStatus.textContent = '邮箱已复制。'
+    } catch {
+      if (emailStatus) emailStatus.textContent = '复制失败，请手动复制显示的邮箱。'
     }
-  }
-</style>
+  })
+</script>
