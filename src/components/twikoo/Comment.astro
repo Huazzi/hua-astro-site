@@ -10,9 +10,10 @@ const twikooConfig = comment.twikoo
 {
   comment.provider === 'twikoo' && twikooConfig.enable && (
     <twikoo-comment>
-      <div id='tcomment' class={cn('not-prose', className)}>
-        Comment seems to stuck. Try to refresh?
-      </div>
+      <p class='text-sm text-muted-foreground' data-comment-status role='status' aria-live='polite'>
+        正在加载评论…
+      </p>
+      <div id='tcomment' class={cn('not-prose', className)} />
     </twikoo-comment>
   )
 }
@@ -26,15 +27,38 @@ const twikooConfig = comment.twikoo
   class TwikooComment extends HTMLElement {
     connectedCallback() {
       const el = this.querySelector('#tcomment')
-      if (!el) return
+      const status = this.querySelector('[data-comment-status]')
+      if (!el || !status) return
 
+      const fail = (reason, error) => {
+        status.hidden = false
+        status.setAttribute('role', 'alert')
+        status.textContent = '评论暂时无法加载，请稍后重试。'
+        console.error(`Twikoo ${reason}:`, error)
+      }
       const initTwikoo = () => {
-        getTwikoo()?.init({
-          el,
-          envId,
-          lang,
-          path: window.location.pathname
-        })
+        try {
+          const twikoo = getTwikoo()
+          if (!twikoo) {
+            fail('init unavailable', envId)
+            return
+          }
+          Promise.resolve(
+            twikoo.init({
+              el,
+              envId,
+              lang,
+              path: window.location.pathname
+            })
+          ).then(
+            () => {
+              status.hidden = true
+            },
+            (error) => fail('init failed', error)
+          )
+        } catch (error) {
+          fail('init failed', error)
+        }
       }
 
       if (getTwikoo()) {
@@ -45,7 +69,14 @@ const twikooConfig = comment.twikoo
       const existingScript = document.querySelector(`script[data-twikoo-cdn="${cdn}"]`)
 
       if (existingScript) {
-        existingScript.addEventListener('load', initTwikoo, { once: true })
+        if (existingScript.dataset.state === 'error') fail('script load failed', cdn)
+        else if (existingScript.dataset.state === 'loaded') initTwikoo()
+        else {
+          existingScript.addEventListener('load', initTwikoo, { once: true })
+          existingScript.addEventListener('error', () => fail('script load failed', cdn), {
+            once: true
+          })
+        }
         return
       }
 
@@ -53,10 +84,22 @@ const twikooConfig = comment.twikoo
       script.src = cdn
       script.async = true
       script.dataset.twikooCdn = cdn
-      script.addEventListener('load', initTwikoo, { once: true })
-      script.addEventListener('error', () => {
-        console.error('Failed to load Twikoo script:', cdn)
-      })
+      script.addEventListener(
+        'load',
+        () => {
+          script.dataset.state = 'loaded'
+          initTwikoo()
+        },
+        { once: true }
+      )
+      script.addEventListener(
+        'error',
+        () => {
+          script.dataset.state = 'error'
+          fail('script load failed', cdn)
+        },
+        { once: true }
+      )
       document.head.append(script)
     }
   }

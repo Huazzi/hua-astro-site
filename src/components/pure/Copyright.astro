@@ -65,7 +65,7 @@ const shares = {
       <span>Copyright</span>
       <a
         class='text-sm text-foreground max-sm:place-self-center'
-        href='https://creativecommons.org/licenses/by/4.0/'
+        href='https://creativecommons.org/licenses/by-nc-sa/4.0/'
         target='_blank'
       >
         CC BY-NC-SA 4.0
@@ -85,6 +85,8 @@ const shares = {
       <button
         id='get-qrcode'
         aria-label='Get QR code'
+        aria-controls='qrcode-container'
+        aria-expanded='false'
         class='group rounded-full bg-muted p-1 text-muted-foreground transition-colors hover:text-primary sm:p-1.5'
       >
         <Icon class='size-5' name='qrcode' />
@@ -132,12 +134,19 @@ const shares = {
   import { showToast } from 'astro-pure/utils'
 
   const copyLink = document.getElementById('copy-link')
-  copyLink?.addEventListener('click', () => {
-    navigator.clipboard.writeText(window.location.href)
-    showToast({ message: 'Link copied!' })
+  copyLink?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      showToast({ message: 'Link copied!' })
+    } catch {
+      showToast({ message: 'Could not copy the link. Please copy it from the address bar.' })
+    }
   })
 
   const getQRCode = document.getElementById('get-qrcode')
   const qrcodeContainer = document.getElementById('qrcode-container')
-  getQRCode?.addEventListener('click', () => qrcodeContainer?.classList.toggle('expanded'))
+  getQRCode?.addEventListener('click', () => {
+    const expanded = qrcodeContainer?.classList.toggle('expanded') ?? false
+    getQRCode.setAttribute('aria-expanded', String(expanded))
+  })
 </script>

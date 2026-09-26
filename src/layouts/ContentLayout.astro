@@ -9,7 +9,7 @@ import BackToTop from '@/components/pure/BackToTop.astro'
 import { integ } from '@/site-config'
 
 interface Props {
-  meta: SiteMeta
+  meta: SiteMeta & { modifiedDate?: string }
   highlightColor?: string
   back?: string
 }
@@ -21,21 +21,33 @@ const { meta, highlightColor, back = '/', ...props } = Astro.props
   <Button title='Back' href={back} variant='back' />
   <main class='mt-6 items-start gap-x-10 md:flex'>
     {/* Sidebar */}
-    <aside
-      class='animate top-20 min-w-48 basis-60 overflow-y-scroll max-md:hidden z-40 fixed md:sticky md:order-2 lg:shrink-0 max-md:border max-md:px-4 max-md:py-3 max-md:bg-muted max-md:rounded-xl'
-      style='height:calc(100vh - 7rem);'
-      id='sidebar'
-    >
-      <slot name='sidebar' />
-    </aside>
-    <div
-      id='sidebar-shade'
-      class='fixed top-0 start-0 w-full h-full'
-      style='display:none;background-color:#00000091;z-index:31'
-    >
+    <div id='sidebar-dialog' aria-label='目录与页面导航'>
+      <aside
+        class='animate top-20 min-w-48 basis-60 overflow-y-scroll max-md:hidden z-40 fixed md:sticky md:order-2 lg:shrink-0 max-md:border max-md:px-4 max-md:py-3 max-md:bg-muted max-md:rounded-xl'
+        style='height:calc(100vh - 7rem);'
+        id='sidebar'
+        tabindex='-1'
+      >
+        <button
+          id='sidebar-close'
+          type='button'
+          aria-label='关闭目录'
+          class='mb-4 rounded-md p-2 md:hidden'
+        >
+          关闭目录
+        </button>
+        <slot name='sidebar' />
+      </aside>
+      <div
+        id='sidebar-shade'
+        aria-hidden='true'
+        class='fixed top-0 start-0 w-full h-full'
+        style='display:none;background-color:#00000091'
+      >
+      </div>
     </div>
 
-    <article class='min-w-0 grow content-article'>
+    <article id='content-article' class='min-w-0 grow content-article'>
       {/* Content header */}
       <div id='content-header' class='animate'>
         <slot name='header' />
@@ -44,17 +56,14 @@ const { meta, highlightColor, back = '/', ...props } = Astro.props
       {/* Content */}
       <div
         id='content'
-        class={cn(
-          'max-w-none animate mt-8 md:min-w-[45ch]',
-          integ.typography.class
-        )}
+        class={cn('max-w-none animate mt-8 md:min-w-[45ch]', integ.typography.class)}
       >
         <slot />
       </div>
     </article>
   </main>
 
-  <div class='bottom mt-6 items-start gap-x-10 md:flex'>
+  <div id='content-bottom' class='bottom mt-6 items-start gap-x-10 md:flex'>
     {/* Bottom */}
     <div class='flex-1 text-muted-foreground md:min-w-[50ch]'>
       <slot name='bottom' />
@@ -67,7 +76,9 @@ const { meta, highlightColor, back = '/', ...props } = Astro.props
   <BackToTop header='content-header' content='content'>
     <button
       slot='other-icons'
-      aria-label='Toggle sidebar'
+      aria-label='打开目录'
+      aria-controls='sidebar'
+      aria-expanded='false'
       class='size-10 flex items-center justify-center rounded-full border-2 border-transparent bg-muted text-muted-foreground duration-300 hover:border-border/75 md:hidden sm:size-12'
       id='sidebar-btn'
     >
@@ -77,41 +88,133 @@ const { meta, highlightColor, back = '/', ...props } = Astro.props
 </PageLayout>
 
 <script>
-  // Toggle sidebar visibility on button click
-  const sidebarButton = document.getElementById('sidebar-btn')
+  const sidebarButton = document.getElementById('sidebar-btn') as HTMLButtonElement | null
+  const sidebarClose = document.getElementById('sidebar-close') as HTMLButtonElement | null
   const sidebar = document.getElementById('sidebar')
-  const sidebarShade = document.getElementById('sidebar-shade') as HTMLElement
+  const sidebarDialog = document.getElementById('sidebar-dialog')
+  const sidebarShade = document.getElementById('sidebar-shade') as HTMLElement | null
+  const content = document.getElementById('content-article')
+  const bottom = document.getElementById('content-bottom')
+  const mobile = window.matchMedia('(max-width: 767px)')
+  let previousOverflow = ''
 
-  if (sidebarShade) {
-    sidebarShade.addEventListener('click', () => {
-      toggleSidebar()
-    })
+  function closeSidebar(restoreFocus = true) {
+    if (!sidebar?.classList.contains('show')) return
+    sidebar.classList.remove('show')
+    sidebarDialog?.removeAttribute('role')
+    sidebarDialog?.removeAttribute('aria-modal')
+    if (sidebarShade) sidebarShade.style.display = 'none'
+    sidebarButton?.setAttribute('aria-expanded', 'false')
+    sidebarButton?.setAttribute('aria-label', '打开目录')
+    for (const element of [content, bottom]) {
+      if (element) element.inert = false
+    }
+    document.body.style.overflow = previousOverflow
+    if (restoreFocus && mobile.matches) sidebarButton?.focus()
   }
 
-  function toggleSidebar() {
-    if (sidebar && sidebar.classList.contains('show')) {
-      sidebar.classList.remove('show')
-      sidebarShade.style.display = 'none'
-    } else if (sidebar) {
-      sidebar.classList.add('show')
-      sidebarShade.style.display = 'block'
+  function openSidebar() {
+    if (!mobile.matches || !sidebar || !sidebarShade || !sidebarButton) return
+    previousOverflow = document.body.style.overflow
+    sidebar.classList.add('show')
+    sidebarDialog?.setAttribute('role', 'dialog')
+    sidebarDialog?.setAttribute('aria-modal', 'true')
+    sidebarShade.style.display = 'block'
+    sidebarButton.setAttribute('aria-expanded', 'true')
+    sidebarButton.setAttribute('aria-label', '关闭目录')
+    for (const element of [content, bottom]) {
+      if (element) element.inert = true
     }
+    document.body.style.overflow = 'hidden'
+    sidebarClose?.focus()
   }
 
   sidebarButton?.addEventListener('click', () => {
-    toggleSidebar()
+    if (sidebar?.classList.contains('show')) closeSidebar()
+    else openSidebar()
+  })
+  sidebarClose?.addEventListener('click', () => closeSidebar())
+  sidebarShade?.addEventListener('click', () => closeSidebar())
+  sidebar?.addEventListener('click', (event) => {
+    if (!(event.target instanceof Element)) return
+    const link = event.target.closest('a[href]')
+    if (!(link instanceof HTMLAnchorElement) || !sidebar.classList.contains('show')) return
+    const target =
+      link.hash && link.pathname === window.location.pathname
+        ? document.getElementById(link.hash.slice(1)) ||
+          document.getElementById(decodeURIComponent(link.hash.slice(1)))
+        : null
+    closeSidebar(false)
+    if (target) {
+      target.setAttribute('tabindex', '-1')
+      target.focus({ preventScroll: true })
+      target.addEventListener('blur', () => target.removeAttribute('tabindex'), { once: true })
+    }
+  })
+
+  document.addEventListener('keydown', (event) => {
+    if (!mobile.matches || !sidebar?.classList.contains('show')) return
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      closeSidebar()
+    } else if (event.key === 'Tab') {
+      const focusable = Array.from(
+        sidebar.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter((element) => element.getClientRects().length > 0)
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (!first || !last) {
+        event.preventDefault()
+        sidebar.focus()
+      } else if (
+        event.shiftKey &&
+        (document.activeElement === first || document.activeElement === sidebar)
+      ) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      } else if (!sidebar.contains(document.activeElement)) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+  })
+  mobile.addEventListener('change', () => {
+    if (!sidebar?.classList.contains('show')) return
+    closeSidebar(false)
+    if (!mobile.matches) {
+      setTimeout(() => sidebar.querySelector<HTMLElement>('a[href]')?.focus(), 0)
+    }
   })
 </script>
 <style>
   .content-article {
     max-width: 48rem;
   }
-  @media (min-width: 769px) {
+  #sidebar-dialog {
+    display: contents;
+  }
+  @media (max-width: 767px) {
+    #sidebar-dialog[role='dialog'] {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+    }
+    #sidebar-dialog[role='dialog'] #sidebar {
+      z-index: 1;
+    }
+  }
+  @media (min-width: 768px) {
     #sidebar-shade {
       display: none !important;
     }
   }
-  @media (max-width: 769px) {
+  @media (max-width: 767px) {
     aside.show {
       display: block !important;
       opacity: 1;

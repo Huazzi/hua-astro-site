@@ -13,12 +13,12 @@ import '@/assets/styles/global.css'
 import '@/assets/styles/app.css'
 
 interface Props {
-  meta: SiteMeta
+  meta: SiteMeta & { modifiedDate?: string }
   highlightColor?: string
 }
 
 const {
-  meta: { articleDate, description = config.description, ogImage, title },
+  meta: { articleDate, modifiedDate, description = config.description, ogImage, title },
   highlightColor,
   ...props
 } = Astro.props
@@ -26,7 +26,7 @@ const {
 
 <html lang={config.locale.lang}>
   <head>
-    <BaseHead {articleDate} {description} {ogImage} {title} />
+    <BaseHead {articleDate} {modifiedDate} {description} {ogImage} {title} />
     <ThemeProvider />
   </head>
 
