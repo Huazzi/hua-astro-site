@@ -1,93 +1,198 @@
 ---
+import type { CollectionEntry } from 'astro:content'
+import FormattedDate from '@astro-pure/user/FormattedDate.astro'
 
+interface Props {
+  post: CollectionEntry<'blog'>
+}
+const { post } = Astro.props
 ---
 
-<div class='field-note' aria-hidden='true'>
-  <div class='note-page'>
-    <span class='note-label'>HUAZZI · FIELD NOTES</span>
-    <svg viewBox='0 0 360 390' fill='none' xmlns='http://www.w3.org/2000/svg'>
-      <path
-        d='M170 336C183 276 169 222 190 166C204 129 231 96 254 67'
-        stroke='currentColor'
-        stroke-width='2.5'
-        stroke-linecap='round'></path>
-      <path
-        d='M181 261C147 218 123 188 80 174M186 220C224 202 251 174 270 139M191 165C165 139 150 106 146 68'
-        stroke='currentColor'
-        stroke-width='2'
-        stroke-linecap='round'></path>
-      <path
-        d='M78 174C81 137 52 125 27 134C29 161 50 178 78 174ZM146 68C117 66 106 42 118 17C144 25 153 44 146 68ZM254 67C255 37 278 20 305 26C306 54 286 72 254 67ZM270 139C293 115 319 120 333 140C316 164 293 160 270 139ZM180 262C145 252 120 265 112 292C141 305 166 294 180 262Z'
-        fill='var(--leaf)'
-        stroke='currentColor'
-        stroke-width='1.5'></path>
-      <path
-        d='M78 174L42 145M146 68L126 31M254 67L291 36M270 139L317 140M180 262L127 287'
-        stroke='var(--paper)'
-        stroke-width='1.5'
-        stroke-linecap='round'></path>
-      <path d='M63 336H297' stroke='currentColor' stroke-opacity='.24'></path>
-      <circle cx='65' cy='354' r='3' fill='var(--clay)'></circle>
-      <path d='M80 354H198' stroke='currentColor' stroke-opacity='.24'></path>
-    </svg>
-    <span class='note-footer'>一些关于技术与生活的记录</span>
+<div class='note-stage'>
+  <span class='stage-caption eyebrow'>A little progress, every day.</span>
+  <div class='note-stack'>
+    <div class='back-sheet sheet-two' aria-hidden='true'></div>
+    <div class='back-sheet sheet-one' aria-hidden='true'><span>THOUGHTS & DISCOVERIES</span></div>
+    <a class='note-page' href={`/blog/${post.id}`} data-astro-prefetch>
+      <div class='note-topline'>
+        <span class='note-tab'>最新笔记</span><span class='note-index'>FIELD NOTES</span>
+      </div>
+      <div class='note-glyph' aria-hidden='true'>[<span>h.</span>]</div>
+      <p class='note-topic'>{post.data.tags.slice(0, 2).join(' / ') || '技术与生活'}</p>
+      <h2>{post.data.title}</h2>
+      <p class='note-description'>{post.data.description}</p>
+      <div class='note-bottom'>
+        <FormattedDate date={post.data.updatedDate ?? post.data.publishDate} /><span
+          class='note-open'
+          aria-hidden='true'>↗</span
+        >
+      </div>
+    </a>
   </div>
+  <span class='note-annotation'>每一次折腾，都有一点收获。<span aria-hidden='true'>↗</span></span>
 </div>
 
 <style>
-  .field-note {
+  .note-stage {
     position: relative;
-    display: grid;
-    min-height: 370px;
-    place-items: center;
+    display: flex;
+    min-width: 0;
+    min-height: 460px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 30px;
+    background-image: radial-gradient(
+      hsl(var(--muted-foreground) / 0.18) 0.75px,
+      transparent 0.75px
+    );
+    background-size: 18px 18px;
+    border-radius: 50%;
   }
-  .field-note::before {
-    content: '';
+  .stage-caption {
+    margin-bottom: 38px;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+  }
+  .note-stack {
+    position: relative;
+    width: 100%;
+    max-width: 340px;
+    perspective: 900px;
+  }
+  .back-sheet {
     position: absolute;
-    inset: 8% 3%;
-    background: hsl(var(--muted));
-    border-radius: 39% 61% 57% 43% / 49% 38% 62% 51%;
-    transform: rotate(-9deg);
+    inset: 0;
+    border: 1px solid hsl(var(--border));
+    border-radius: 14px;
+    transition: transform 500ms var(--ease-out);
+  }
+  .sheet-two {
+    background: hsl(var(--primary) / 0.13);
+    transform: rotate(-9deg) translate(-8px, -2px);
+  }
+  .sheet-one {
+    background: hsl(var(--card));
+    transform: rotate(5deg) translate(12px, 3px);
+  }
+  .sheet-one span {
+    position: absolute;
+    right: 20px;
+    bottom: 14px;
+    font: 8px var(--code-font);
+    color: hsl(var(--muted-foreground));
   }
   .note-page {
     position: relative;
-    display: flex;
-    width: min(82%, 360px);
-    flex-direction: column;
-    padding: 1.25rem 1.4rem;
-    color: hsl(var(--foreground));
-    background: var(--paper);
+    display: block;
+    padding: 24px 28px 18px;
     border: 1px solid hsl(var(--border));
-    border-radius: 4px 18px 5px 12px;
-    box-shadow: 14px 18px 0 hsl(var(--foreground) / 0.07);
-    transform: rotate(4deg);
+    border-radius: 14px;
+    background: hsl(var(--card));
+    box-shadow: 0 16px 45px -16px hsl(218 42% 15% / 0.18);
+    transform: rotate(-3deg);
+    transition:
+      transform 500ms var(--ease-out),
+      box-shadow 500ms;
   }
-  .note-label,
-  .note-footer {
-    font-size: 0.66rem;
-    letter-spacing: 0.12em;
+  .note-stack:hover .note-page,
+  .note-stack:focus-within .note-page {
+    transform: rotate(0) translateY(-8px);
+    box-shadow: 0 25px 50px -18px hsl(var(--primary) / 0.25);
   }
-  .note-label {
+  .note-stack:hover .sheet-two,
+  .note-stack:focus-within .sheet-two {
+    transform: rotate(-12deg) translate(-10px, 0);
+  }
+  .note-topline,
+  .note-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .note-tab {
+    font-size: 10px;
     color: hsl(var(--primary));
+    background: hsl(var(--primary) / 0.08);
+    padding: 3px 8px;
+    border-radius: 4px;
   }
-  .note-footer {
-    align-self: flex-end;
+  .note-index {
+    color: hsl(var(--muted-foreground));
+    font: 9px var(--code-font);
+    letter-spacing: 0.1em;
+  }
+  .note-glyph {
+    margin: 24px 0 18px;
+    font-family: var(--code-font);
+    font-size: 44px;
+    line-height: 1;
+    color: hsl(var(--primary) / 0.3);
+    letter-spacing: 0.1em;
+  }
+  .note-glyph span {
+    color: hsl(var(--primary));
+    letter-spacing: -0.1em;
+    padding-right: 8px;
+  }
+  .note-topic {
+    font: 10px var(--code-font);
     color: hsl(var(--muted-foreground));
   }
-  svg {
-    width: 100%;
-    max-height: 290px;
+  h2 {
+    margin: 10px 0;
+    color: hsl(var(--foreground));
+    font-size: 21px;
+    line-height: 1.55;
+    letter-spacing: -0.03em;
   }
-  @media (max-width: 640px) {
-    .field-note {
-      min-height: 260px;
+  .note-description {
+    color: hsl(var(--muted-foreground));
+    font-size: 12px;
+    line-height: 1.9;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .note-bottom {
+    margin-top: 24px;
+    padding-top: 15px;
+    border-top: 1px solid hsl(var(--border));
+    font: 10px var(--code-font);
+    color: hsl(var(--muted-foreground));
+  }
+  .note-open {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: hsl(var(--primary) / 0.08);
+    color: hsl(var(--primary));
+    font-size: 19px;
+  }
+  .note-annotation {
+    margin-top: 33px;
+    color: hsl(var(--muted-foreground));
+    font-size: 11px;
+  }
+  .note-annotation span {
+    display: inline-block;
+    font-size: 20px;
+    margin-left: 16px;
+    transform: rotate(-20deg);
+  }
+  @media (max-width: 767px) {
+    .note-stage {
+      min-height: 400px;
+      padding: 20px 28px;
     }
-    .note-page {
-      width: min(70%, 240px);
-      padding: 0.75rem 1rem;
+    .stage-caption {
+      margin-bottom: 28px;
     }
-    svg {
-      max-height: 190px;
+    .note-stack {
+      max-width: 330px;
     }
   }
 </style>

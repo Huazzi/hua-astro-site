@@ -1,0 +1,95 @@
+---
+import type { MarkdownHeading } from 'astro'
+
+interface Props {
+  headings: MarkdownHeading[]
+}
+const { headings } = Astro.props
+---
+
+<article-toc>
+  <nav aria-label='文章目录'>
+    <p class='eyebrow'>ON THIS PAGE / 本页目录</p>
+    <ul>
+      {
+        headings.map(({ depth, slug, text }) => (
+          <li>
+            <a href={`#${slug}`} style={`--toc-indent:${Math.max(0, depth - 2) * 12}px`}>
+              {text}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</article-toc>
+
+<script>
+  class ArticleToc extends HTMLElement {
+    connectedCallback() {
+      const entries = Array.from(this.querySelectorAll<HTMLAnchorElement>('a'))
+        .map((link) => ({
+          link,
+          heading: document.getElementById(decodeURIComponent(link.hash.slice(1)))
+        }))
+        .filter((entry) => entry.heading)
+      for (const { heading } of entries) heading!.tabIndex = -1
+      let scheduled = false
+      const update = () => {
+        let active = entries[0]
+        for (const entry of entries) {
+          if (entry.heading!.getBoundingClientRect().top <= 150) active = entry
+        }
+        for (const entry of entries) {
+          if (entry === active) entry.link.setAttribute('aria-current', 'location')
+          else entry.link.removeAttribute('aria-current')
+        }
+        scheduled = false
+      }
+      const schedule = () => {
+        if (scheduled) return
+        scheduled = true
+        requestAnimationFrame(update)
+      }
+      window.addEventListener('scroll', schedule, { passive: true })
+      window.addEventListener('resize', schedule)
+      update()
+    }
+  }
+  customElements.define('article-toc', ArticleToc)
+</script>
+
+<style>
+  article-toc {
+    display: block;
+  }
+  .eyebrow {
+    font-size: 10px;
+    margin-bottom: 20px;
+  }
+  ul {
+    border-left: 1px solid hsl(var(--border));
+  }
+  a {
+    display: block;
+    padding: 8px 12px 8px calc(16px + var(--toc-indent));
+    border-left: 2px solid transparent;
+    margin-left: -1px;
+    color: hsl(var(--muted-foreground));
+    font-size: 12px;
+    line-height: 1.7;
+    transition:
+      color 180ms,
+      border-color 180ms,
+      background 180ms;
+  }
+  a:hover {
+    color: hsl(var(--foreground));
+    background: hsl(var(--muted));
+  }
+  a[aria-current='location'] {
+    border-color: hsl(var(--primary));
+    color: hsl(var(--primary));
+    background: hsl(var(--primary) / 0.06);
+  }
+</style>

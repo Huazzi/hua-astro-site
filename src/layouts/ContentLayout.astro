@@ -6,6 +6,7 @@ import type { SiteMeta } from 'astro-pure/types'
 import { cn } from 'astro-pure/utils'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import BackToTop from '@/components/pure/BackToTop.astro'
+import ReadingProgress from '@/components/pure/ReadingProgress.astro'
 import { integ } from '@/site-config'
 
 interface Props {
@@ -18,7 +19,8 @@ const { meta, highlightColor, back = '/', ...props } = Astro.props
 ---
 
 <PageLayout {meta} {highlightColor} {...props}>
-  <Button title='Back' href={back} variant='back' />
+  {meta.articleDate && <ReadingProgress />}
+  <Button title={back === '/blog' ? '返回文章' : '返回首页'} href={back} variant='back' />
   <main class='mt-6 items-start gap-x-10 md:flex'>
     {/* Sidebar */}
     <div id='sidebar-dialog' aria-label='目录与页面导航'>
@@ -73,7 +75,7 @@ const { meta, highlightColor, back = '/', ...props } = Astro.props
     </div>
   </div>
 
-  <BackToTop header='content-header' content='content'>
+  <BackToTop header='content-header' content='content' needPercent={false}>
     <button
       slot='other-icons'
       aria-label='打开目录'
@@ -203,7 +205,7 @@ const { meta, highlightColor, back = '/', ...props } = Astro.props
       display: block;
       position: fixed;
       inset: 0;
-      z-index: 40;
+      z-index: 70;
     }
     #sidebar-dialog[role='dialog'] #sidebar {
       z-index: 1;

@@ -1,50 +1,90 @@
 ---
-import Button from '@astro-pure/user/Button.astro'
-
 import { getBlogCollection, getUniqueTagsWithCount } from 'astro-pure/server'
-import { cn } from 'astro-pure/utils'
 import PageLayout from '@/layouts/BaseLayout.astro'
 
-const allPosts = await getBlogCollection()
-const allTags = getUniqueTagsWithCount(allPosts)
-
-const meta = {
-  description: "A list of all the topics I've written about in my posts",
-  title: 'All Tags'
-}
+export const prerender = true
+const allTags = getUniqueTagsWithCount(await getBlogCollection()).sort((a, b) => b[1] - a[1])
+const meta = { description: '按主题探索 Huazzi 的技术实践与生活记录。', title: '标签' }
 ---
 
 <PageLayout {meta}>
-  <Button title='Back' href='/blog' variant='back' />
-  <main class='mt-6 lg:mt-10'>
+  <main class='tags-page'>
     <div id='content-header' class='animate'>
-      <h1 class='mb-6 text-3xl font-medium'>Tags</h1>
+      <p class='eyebrow'>FOLLOW YOUR CURIOSITY</p><h1 class='mt-3 mb-4'>循着兴趣，继续探索。</h1><p
+        class='text-sm text-muted-foreground'
+      >
+        {allTags.length} 个主题，找到你感兴趣的那一个。
+      </p>
     </div>
-
     <div id='content' class='animate'>
-      {
-        allTags.length > 0 ? (
-          <ul class='flex flex-wrap gap-4'>
-            {allTags.map(([tag, val]) => (
-              <li>
-                <Button
-                  href={`/tags/${tag}`}
-                  variant='pill'
-                  class={cn(
-                    'items-start gap-x-1',
-                    val > 2 ? 'rounded-xl px-3 py-1 text-xl' : val > 1 && 'text-lg'
-                  )}
-                >
-                  {tag}
-                  <span class={val > 2 ? 'text-base' : 'text-xs'}>{val}</span>
-                </Button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>Any tag yet.</p>
-        )
-      }
+      <ul class='tags-grid'>
+        {
+          allTags.map(([tag, count]) => (
+            <li>
+              <a href={`/tags/${encodeURIComponent(tag)}`}>
+                <>
+                  <span class='tag-hash'>#</span>
+                  <span>{tag}</span>
+                  <span class='tag-count'>
+                    {count} 篇 <span aria-hidden='true'>↗</span>
+                  </span>
+                </>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </main>
 </PageLayout>
+<style>
+  .tags-page {
+    padding-top: 24px;
+  }
+  .tags-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .tags-grid a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 70px;
+    padding: 16px 20px;
+    border: 1px solid hsl(var(--border));
+    border-radius: 12px;
+    background: hsl(var(--card));
+    font-size: 14px;
+    transition:
+      transform 180ms,
+      border-color 180ms;
+  }
+  .tags-grid a:hover {
+    transform: translateY(-2px);
+    border-color: hsl(var(--primary) / 0.35);
+  }
+  .tag-hash {
+    font-family: var(--code-font);
+    color: hsl(var(--primary) / 0.6);
+  }
+  .tag-count {
+    margin-left: auto;
+    flex: none;
+    color: hsl(var(--muted-foreground));
+    font-size: 10px;
+  }
+  .tag-count > span {
+    margin-left: 8px;
+  }
+  @media (max-width: 900px) {
+    .tags-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 500px) {
+    .tags-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

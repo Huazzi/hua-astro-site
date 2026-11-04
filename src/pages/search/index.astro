@@ -6,23 +6,24 @@ import PageLayout from '@/layouts/BaseLayout.astro'
 import { integ } from '@/site-config'
 
 const meta = {
-  description: 'Search relative posts of the whole blog',
-  title: 'Search'
+  description: '搜索 Huazzi 的文章，找到问题的解法和相关笔记。',
+  title: '搜索'
 }
 ---
 
 <PageLayout {meta}>
-  <Button title='Back' href='/blog' variant='back' />
+  <Button title='返回文章' href='/blog' variant='back' />
   <main class='mt-6 lg:mt-10'>
     <div id='content-header' class='animate'>
-      <h1 class='mb-6 text-3xl font-medium'>Search</h1>
+      <p class='eyebrow'>FIND A NOTE</p>
+      <h1 class='mt-3 mb-4'>找找看，或许记过。</h1>
     </div>
 
     <div id='content' class='animate'>
       {
         integ.pagefind ? (
           <>
-            <p>Enter a search term or phrase to search the blog.</p>
+            <p class='text-sm text-muted-foreground mb-6'>输入关键词，搜索文章标题与正文。</p>
             <PFSearch />
           </>
         ) : (
