@@ -1,297 +1,215 @@
 ---
 import Icon from '@astro-pure/user/Icon.astro'
 import config from 'virtual:config'
-
-const pathname = Astro.url.pathname
-const isCurrent = (link: string) => pathname === link || pathname.startsWith(`${link}/`)
 ---
 
-<header-component class='site-header' role='banner'>
-  <a class='brand' href='/' aria-label='Huazzi，返回首页'>
-    <span class='brand-symbol' aria-hidden='true'>h<span>.</span></span>
-    <span>{config.author}<span class='brand-caption'> / 日常与代码</span></span>
-  </a>
-  <nav id='headerExpandContent' aria-label='主导航'>
-    <a href='/' aria-current={pathname === '/' ? 'page' : undefined}>首页</a>
-    {
-      config.header.menu.map((item) => (
-        <a
-          href={item.link}
-          aria-current={isCurrent(item.link) ? 'page' : undefined}
-          data-astro-prefetch
-        >
-          {item.title}
-        </a>
-      ))
-    }
-  </nav>
-  <div class='header-tools'>
-    <a
-      class='icon-button search-link'
-      href='/search'
-      aria-label='搜索文章'
-      title='搜索文章（⌘ / Ctrl K）'
+<header-component
+  class='group sticky top-4 z-50 max-md:z-30 mb-12 flex items-center justify-between rounded-2xl border border-transparent px-2 py-2 sm:px-4'
+>
+  <a
+    class='z-30 text-xl font-medium group-[.not-top]:ms-2 sm:group-[.not-top]:ms-3'
+    style='transition:margin-inline 0.3s;font-family:var(--display-font)'
+    href='/'
+    aria-label='返回首页'>{config.title}<span class='brand-leaf' aria-hidden='true'>✳</span></a
+  >
+
+  <div class='flex items-center gap-x-2'>
+    <nav
+      id='headerExpandContent'
+      aria-label='主导航'
+      class='end-0 start-0 top-12 grid border border-transparent group-[.not-top]:rounded-xl group-[.expanded]:opacity-100 dark:group-[.expanded.not-top]:bg-muted max-sm:absolute max-sm:opacity-0 max-sm:group-[.not-top]:border-border max-sm:group-[.expanded.not-top]:bg-background max-sm:group-[.not-top]:px-4 max-sm:group-[.not-top]:py-2 sm:grid-rows-1'
     >
-      <Icon name='search' class='size-4' /><kbd aria-hidden='true'>⌘ K</kbd>
-    </a>
-    <span class='tool-divider' aria-hidden='true'></span>
-    <button id='toggleDarkMode' class='icon-button' aria-label='切换主题' title='切换主题'>
-      <Icon class='theme-sun size-5' name='sun' />
-      <Icon class='theme-moon size-5' name='moon' />
-    </button>
-    <button
-      id='toggleMenu'
-      class='icon-button menu-button'
-      aria-controls='headerExpandContent'
-      aria-expanded='false'
-      aria-label='打开导航'
-    >
-      <span class='menu-lines' aria-hidden='true'></span>
-    </button>
+      <div class='flex flex-col items-center justify-center overflow-hidden sm:flex-row'>
+        {
+          config.header.menu.map((item) => (
+            <a
+              href={item.link}
+              class='w-full flex-none grow py-2 text-right font-medium transition-none hover:text-primary sm:w-fit sm:px-3'
+              data-astro-prefetch
+            >
+              {item.title}
+            </a>
+          ))
+        }
+        <div class='flex w-full grow flex-row justify-end gap-x-3 sm:w-fit sm:gap-x-5'>
+          <a class='inline-flex min-h-11 min-w-11 items-center justify-center transition-none' href='/search' title='Search'>
+            <span class='sr-only'>Search</span>
+            <Icon name='search' class='size-5' />
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <div class='z-30 flex gap-x-4 group-[.not-top]:gap-x-2' style='transition:gap 0.3s'>
+      <button
+        id='toggleDarkMode'
+        class='group/dark box-content size-5 rounded-md border p-1.5 transition-colors hover:bg-border sm:group-[.not-top]:rounded-xl'
+      >
+        <span class='sr-only'>Dark Theme</span>
+        <Icon class='system size-5 group-hover/dark:text-primary' name='computer' />
+        <Icon class='light hidden size-5 group-hover/dark:text-primary' name='sun' />
+        <Icon class='dark hidden size-5 group-hover/dark:text-primary' name='moon' />
+      </button>
+      <button
+        id='toggleMenu'
+        aria-controls='headerExpandContent'
+        aria-expanded='false'
+        class='rounded-md border p-1.5 transition-colors hover:bg-border sm:hidden sm:group-[.not-top]:rounded-xl'
+      >
+        <span class='sr-only'>Menu</span>
+        <Icon class='size-5' name='menu' />
+      </button>
+    </div>
   </div>
 </header-component>
 
+<script is:inline>
+  const toggleDarkModeElement = document.getElementById('toggleDarkMode')
+  if (toggleDarkModeElement) {
+    toggleDarkModeElement.dataset.theme = localStorage.getItem('theme') || 'system'
+  }
+</script>
 <script>
-  import { setTheme } from 'astro-pure/utils'
+  import { setTheme, showToast } from 'astro-pure/utils'
 
   class HeaderComponent extends HTMLElement {
     connectedCallback() {
-      const menu = this.querySelector<HTMLButtonElement>('#toggleMenu')!
-      const themeButton = this.querySelector<HTMLButtonElement>('#toggleDarkMode')!
-      const closeMenu = (focus = false) => {
-        this.classList.remove('expanded')
-        menu.setAttribute('aria-expanded', 'false')
-        menu.setAttribute('aria-label', '打开导航')
-        if (focus) menu.focus()
-      }
-      const updateThemeLabel = () => {
-        const dark = document.documentElement.classList.contains('dark')
-        themeButton.setAttribute('aria-label', dark ? '切换为浅色模式' : '切换为深色模式')
-        themeButton.title = dark ? '切换为浅色模式' : '切换为深色模式'
-      }
-      updateThemeLabel()
-      const observer = new MutationObserver(updateThemeLabel)
-      observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
-      themeButton.addEventListener('click', () => {
-        setTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark', true)
+      let preScrollY = window.scrollY
+      this.classList.toggle('not-top', preScrollY > 20)
+      window.addEventListener('scroll', () => {
+        this.classList.toggle('not-top', window.scrollY > 20)
+        this.dataset.show = (window.scrollY < 350 || window.scrollY < preScrollY).toString()
+        preScrollY = window.scrollY
       })
-      menu.addEventListener('click', () => {
+
+      const darkModeBtn = this.querySelector('#toggleDarkMode') as HTMLElement
+      darkModeBtn.addEventListener('click', () => {
+        const newTheme = setTheme(undefined, true)
+        darkModeBtn.dataset.theme = newTheme
+        showToast({ message: `Set theme to ${newTheme}` })
+      })
+
+      const menuButton = this.querySelector('#toggleMenu')
+      menuButton?.addEventListener('click', () => {
         const expanded = this.classList.toggle('expanded')
-        menu.setAttribute('aria-expanded', String(expanded))
-        menu.setAttribute('aria-label', expanded ? '关闭导航' : '打开导航')
+        menuButton.setAttribute('aria-expanded', String(expanded))
       })
-      document.addEventListener('click', (event) => {
-        if (event.target instanceof Node && !this.contains(event.target)) closeMenu()
-      })
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && this.classList.contains('expanded')) closeMenu(true)
-        if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
-          event.preventDefault()
-          window.location.assign('/search')
+      this.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && this.classList.contains('expanded')) {
+          this.classList.remove('expanded')
+          menuButton?.setAttribute('aria-expanded', 'false')
+          if (menuButton instanceof HTMLElement) menuButton.focus()
         }
       })
-      this.addEventListener('focusout', (event) => {
-        if (event.relatedTarget instanceof Node && !this.contains(event.relatedTarget)) closeMenu()
-      })
-      window.matchMedia('(min-width: 768px)').addEventListener('change', () => closeMenu())
-      const updateScroll = () => this.classList.toggle('scrolled', window.scrollY > 16)
-      updateScroll()
-      window.addEventListener('scroll', updateScroll, { passive: true })
     }
   }
+
   customElements.define('header-component', HeaderComponent)
 </script>
 
 <style>
-  .site-header {
-    position: sticky;
-    top: 12px;
-    z-index: 50;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    min-height: 72px;
-    margin: 16px -16px 48px;
-    padding: 8px 16px;
-    border: 1px solid transparent;
-    border-radius: 18px;
-    transition:
-      background 220ms,
-      box-shadow 220ms,
-      border-color 220ms;
+  .brand-leaf {
+    display: inline-block;
+    margin-inline-start: 0.35rem;
+    color: var(--leaf);
+    font-family: var(--body-font);
+    font-size: 0.8em;
   }
-  .site-header.scrolled,
-  .site-header.expanded {
-    background: hsl(var(--background) / 0.92);
-    border-color: hsl(var(--border));
-    backdrop-filter: blur(18px);
-    box-shadow: 0 8px 32px hsl(var(--foreground) / 0.05);
-  }
-  .brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    white-space: nowrap;
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: -0.03em;
-  }
-  .brand-symbol {
-    display: grid;
-    place-content: center;
-    grid-auto-flow: column;
-    width: 34px;
-    height: 34px;
-    border-radius: 11px;
-    background: hsl(var(--foreground));
-    color: hsl(var(--background));
-    font-size: 26px;
-    line-height: 1;
-    letter-spacing: -0.08em;
-  }
-  .brand-symbol span {
-    color: #93afff;
-  }
-  .brand-caption {
-    font-size: 0.7rem;
-    font-weight: 400;
-    letter-spacing: 0.01em;
-    color: hsl(var(--muted-foreground));
-    margin-left: 4px;
-  }
-  nav,
-  .header-tools {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  nav a {
-    position: relative;
-    padding: 8px 13px;
-    border-radius: 9px;
-    color: hsl(var(--muted-foreground));
-    font-size: 0.85rem;
-  }
-  nav a:hover {
-    background: hsl(var(--muted));
-    color: hsl(var(--foreground));
-  }
-  nav a[aria-current='page'] {
-    background: hsl(var(--primary) / 0.08);
-    color: hsl(var(--primary));
-  }
-  .icon-button {
+  #toggleDarkMode,
+  #toggleMenu {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    flex: none;
-    gap: 8px;
-    min-width: 44px;
-    min-height: 44px;
-    border-radius: 10px;
-    color: hsl(var(--muted-foreground));
+  }
+  header-component {
     transition:
-      background 180ms,
-      color 180ms;
-  }
-  .icon-button:hover {
-    background: hsl(var(--muted));
-    color: hsl(var(--foreground));
-  }
-  kbd {
-    border: 1px solid hsl(var(--border));
-    border-radius: 4px;
-    font-family: var(--code-font);
-    font-size: 10px;
-    line-height: 1.7;
-    padding: 0 4px;
-  }
-  .tool-divider {
-    height: 16px;
-    width: 1px;
-    background: hsl(var(--border));
-    margin: 0 5px;
-  }
-  .theme-moon,
-  .menu-button {
-    display: none;
-  }
-  :global(.dark) .theme-moon {
-    display: block;
-  }
-  :global(.dark) .theme-sun {
-    display: none;
-  }
-  @media (max-width: 1023px) {
-    .brand-caption {
-      display: none;
+      padding 0.3s,
+      transform 0.3s,
+      margin-inline 0.3s,
+      border 0.15s,
+      background-color 0.15s;
+
+    &.not-top {
+      --un-border-opacity: 1;
+      border-color: hsl(var(--border) / var(--un-border-opacity));
+      --un-bg-opacity: 1;
+      background-color: hsl(var(--background) / 0.96);
+      padding-left: 0.375rem;
+      padding-right: 0.375rem;
+      box-shadow: 0 12px 30px hsl(var(--foreground) / 0.08);
     }
-    nav a {
-      padding-inline: 10px;
+    &[data-show='false']:not(.expanded) {
+      transform: translateY(-5rem);
     }
   }
-  @media (max-width: 767px) {
-    .site-header {
-      min-height: 60px;
-      margin: 8px -8px 30px;
-      padding: 6px 8px;
-      top: 8px;
+  @media (min-width: 800px) {
+    header-component.not-top {
+      margin-inline: 8%;
     }
-    .menu-button {
-      display: inline-flex;
+  }
+  :global(.dark) header-component.not-top {
+    background-color: hsl(var(--muted) / var(--un-bg-opacity));
+  }
+
+  @media (max-width: 640px) {
+    #headerExpandContent {
+      grid-template-rows: 0fr;
+      visibility: hidden;
+      transition:
+        visibility 0.3s,
+        opacity 0.3s,
+        padding 0.3s,
+        border-color 0.15s,
+        grid-template-rows 0.3s;
     }
-    kbd,
-    .tool-divider {
-      display: none;
+    .expanded #headerExpandContent {
+      grid-template-rows: 1fr;
+      visibility: visible;
     }
-    nav {
+    .expanded.not-top #headerExpandContent {
+      box-shadow: 0 12px 30px hsl(var(--foreground) / 0.08);
+    }
+
+    header-component #headerExpandContent::after {
+      box-sizing: content-box;
+      content: '';
       position: absolute;
-      top: calc(100% + 8px);
-      left: 0;
-      right: 0;
-      padding: 10px;
-      display: grid;
-      background: hsl(var(--card));
-      border: 1px solid hsl(var(--border));
-      border-radius: 14px;
-      box-shadow: 0 16px 40px hsl(var(--foreground) / 0.08);
+      inset-inline: calc(-1rem - 1px);
+      bottom: 0;
+      top: -5rem;
+      z-index: -1;
+      transition: 0.3s;
       visibility: hidden;
       opacity: 0;
-      transform: translateY(-6px);
-      transition:
-        opacity 180ms,
-        transform 180ms,
-        visibility 180ms;
+      border-bottom: 1px solid transparent;
     }
-    .expanded nav {
+    header-component:not(.not-top) #headerExpandContent::after {
       visibility: visible;
+      bottom: -1rem;
       opacity: 1;
-      transform: translateY(0);
+      background-color: hsl(var(--muted) / var(--un-bg-opacity, 1));
+      border-bottom-color: hsl(var(--border) / var(--un-border-opacity, 1));
     }
-    nav a {
-      padding: 11px 15px;
+  }
+
+  #toggleDarkMode {
+    &[data-theme='dark'] {
+      & .system {
+        display: none;
+      }
+      & .dark {
+        display: block;
+      }
     }
-    .menu-lines,
-    .menu-lines::after {
-      width: 18px;
-      height: 1.5px;
-      background: currentColor;
-      display: block;
-      transition: transform 180ms;
-    }
-    .menu-lines {
-      transform: translateY(-3px);
-    }
-    .menu-lines::after {
-      content: '';
-      transform: translateY(6px);
-    }
-    .expanded .menu-lines {
-      transform: rotate(45deg);
-    }
-    .expanded .menu-lines::after {
-      transform: rotate(-90deg);
+    &[data-theme='light'] {
+      & .system {
+        display: none;
+      }
+      .light {
+        display: block;
+      }
     }
   }
 </style>

@@ -1,6 +1,9 @@
 ---
 import { Image } from 'astro:assets'
 import { render, type CollectionEntry, type CollectionKey } from 'astro:content'
+import Button from '@astro-pure/user/Button.astro'
+import FormattedDate from '@astro-pure/user/FormattedDate.astro'
+import Icon from '@astro-pure/user/Icon.astro'
 
 import { cn } from 'astro-pure/utils'
 
@@ -9,46 +12,19 @@ type Props<T extends CollectionKey> = {
   detailed?: boolean
   class?: string
 }
+
 const { post, detailed = false, class: className } = Astro.props
 const { id, data } = post
+const { remarkPluginFrontmatter } = await render(post)
 const postDate = data.updatedDate ?? data.publishDate
-const date = postDate.toISOString().slice(0, 10)
-const minutesRead = detailed ? (await render(post)).remarkPluginFrontmatter.minutesRead : undefined
 ---
 
-<li class={cn('post-preview', detailed && 'detailed', className)}>
-  <time class='preview-date' datetime={date}
-    ><span>{date.slice(5).replace('-', '.')}</span><span>{date.slice(0, 4)}</span></time
-  >
-  <div class='preview-body'>
-    <div class='preview-kicker'>
-      {data.tags[0] || '随笔'}{
-        detailed && minutesRead && (
-          <>
-            <>
-              <span>·</span>
-              <span>{minutesRead}</span>
-            </>
-          </>
-        )
-      }
-    </div>
-    <a class='preview-title' href={`/blog/${id}`} data-astro-prefetch>
-      {data.draft && <span class='text-red-500'>(Draft) </span>}{data.title}
-    </a>
-    <p class='preview-description'>{data.description}</p>
-    {
-      detailed && data.tags.length > 0 && (
-        <ul class='tag-list'>
-          {data.tags.map((tag: string) => (
-            <li>
-              <a href={`/tags/${encodeURIComponent(tag)}`}>#{tag}</a>
-            </li>
-          ))}
-        </ul>
-      )
-    }
-  </div>
+<li
+  class={cn('post-preview', detailed && 'detailed', className)}
+  style={detailed && data.heroImage?.color
+    ? `--preview-highlight-bg:hsl(from ${data.heroImage.color} h s l/12%)`
+    : undefined}
+>
   {
     detailed && data.heroImage && (
       <Image
@@ -59,185 +35,137 @@ const minutesRead = detailed ? (await render(post)).remarkPluginFrontmatter.minu
       />
     )
   }
-  <span class='preview-arrow' aria-hidden='true'>↗</span>
-</li>
-
-<style>
-  .post-preview {
-    position: relative;
-    isolation: isolate;
-    display: flex;
-    align-items: flex-start;
-    gap: 24px;
-    padding: 24px 0;
-    border-bottom: 1px solid hsl(var(--border));
-    transition: background 180ms;
-  }
-  .post-preview::before {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    inset: 4px -14px;
-    border-radius: 10px;
-    background: hsl(var(--muted));
-    opacity: 0;
-    transition: opacity 200ms;
-  }
-  .post-preview:hover::before,
-  .post-preview:focus-within::before {
-    opacity: 0.75;
-  }
-  .preview-date {
-    position: relative;
-    flex: 0 0 48px;
-    padding-top: 3px;
-    font-family: var(--code-font);
-    font-variant-numeric: tabular-nums;
-  }
-  .preview-date span {
-    display: block;
-    font-size: 12px;
-    color: hsl(var(--muted-foreground));
-  }
-  .preview-date span + span {
-    font-size: 9px;
-    margin-top: 5px;
-    opacity: 0.8;
-  }
-  .preview-body {
-    flex: 1;
-    min-width: 0;
-  }
-  .preview-kicker {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 6px;
-    font-size: 10px;
-    color: hsl(var(--muted-foreground));
-  }
-  .preview-title {
-    overflow-wrap: anywhere;
-    font-size: 16px;
-    line-height: 1.65;
-    font-weight: 500;
-    letter-spacing: -0.015em;
-    color: hsl(var(--foreground));
-  }
-  .preview-title::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    border-radius: 10px;
-  }
-  .preview-title:focus-visible {
-    outline: 0;
-  }
-  .post-preview:has(.preview-title:focus-visible) {
-    outline: 2px solid hsl(var(--ring));
-    outline-offset: 6px;
-    border-radius: 8px;
-  }
-  .post-preview:hover .preview-title {
-    color: hsl(var(--primary));
-  }
-  .preview-description {
-    position: relative;
-    margin-top: 6px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    color: hsl(var(--muted-foreground));
-    font-size: 12px;
-    line-height: 1.8;
-  }
-  .preview-arrow {
-    position: relative;
-    flex: none;
-    margin-top: 22px;
-    color: hsl(var(--muted-foreground));
-    font-size: 17px;
-    transition:
-      transform 220ms var(--ease-out),
-      color 220ms;
-  }
-  .post-preview:hover .preview-arrow {
-    color: hsl(var(--primary));
-    transform: translate(3px, -3px);
-  }
-  .detailed {
-    padding-block: 28px;
-    gap: 26px;
-  }
-  .detailed .preview-title {
-    font-size: clamp(18px, 2vw, 22px);
-    font-weight: 600;
-  }
-  .detailed .preview-description {
-    white-space: normal;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    margin-top: 10px;
-    font-size: 13px;
-  }
-  .tag-list {
-    display: flex;
-    position: relative;
-    z-index: 2;
-    flex-wrap: wrap;
-    gap: 6px 12px;
-    width: fit-content;
-    margin-top: 14px;
-    font-size: 10px;
-    color: hsl(var(--muted-foreground));
-  }
-  .tag-list a {
-    display: inline-block;
-    padding-block: 3px;
-  }
-  .cover-image {
-    position: relative;
-    width: 100px;
-    height: 85px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-top: 25px;
-  }
-  @media (max-width: 640px) {
-    .post-preview {
-      gap: 15px;
-      padding-block: 22px;
+  <div class='preview-body'>
+    <FormattedDate class='preview-date' date={postDate} />
+    <a class='preview-title' href={`/blog/${id}`} data-astro-prefetch>
+      <span>
+        {data.draft && <span class='text-red-500'>(Draft) </span>}{data.title}
+      </span>
+      <span class='preview-arrow' aria-hidden='true'>↗</span>
+    </a>
+    {
+      detailed && (
+        <>
+          <p class='preview-description'>{data.description}</p>
+          <div class='preview-meta'>
+            <span class='flex items-center gap-1'>
+              <Icon name='time' class='size-4' />
+              {remarkPluginFrontmatter.minutesRead}
+            </span>
+            {data.language && (
+              <span class='flex items-center gap-1'>
+                <Icon name='earth' class='size-4' />
+                {data.language}
+              </span>
+            )}
+          </div>
+          {data.tags.length > 0 && (
+            <ul class='tag-list'>
+              {data.tags.map((tag: string) => (
+                <li>
+                  <Button as='a' title={tag} href={`/tags/${tag}`} variant='pill' />
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
+      )
     }
-    .preview-date {
-      flex-basis: 42px;
+  </div>
+
+  <style>
+    .post-preview {
+      position: relative;
+      display: flex;
+      overflow: hidden;
+      border: 1px solid hsl(var(--border));
+      border-radius: var(--organic-radius);
+      background: hsl(var(--card));
+      transition:
+        background 0.5s ease,
+        transform 0.5s ease;
+    }
+    .post-preview:hover,
+    .post-preview:focus-within {
+      background: var(--preview-highlight-bg, hsl(var(--muted)));
+      transform: translateY(2px);
+    }
+    .preview-body {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      min-width: 0;
+      width: 100%;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 1.15rem 1.35rem;
+    }
+    .preview-date,
+    .preview-meta {
+      color: hsl(var(--muted-foreground));
+      font-size: 0.78rem;
+      font-variant-numeric: tabular-nums;
     }
     .preview-title {
-      font-size: 15px;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      font-family: var(--display-font);
+      font-size: 1.12rem;
+      line-height: 1.45;
+    }
+    .preview-title:hover {
+      color: hsl(var(--primary));
+    }
+    .preview-arrow {
+      flex: none;
+      color: hsl(var(--primary));
     }
     .detailed {
-      flex-wrap: wrap;
-    }
-    .detailed .preview-date {
-      flex-basis: 100%;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 0;
-    }
-    .detailed .preview-date span + span {
-      margin: 0;
+      min-height: 220px;
     }
     .detailed .preview-body {
-      flex-basis: calc(100% - 30px);
+      padding: 1.5rem 1.75rem;
     }
-    .detailed .preview-arrow {
-      margin-top: 24px;
+    .detailed .preview-title {
+      font-size: clamp(1.3rem, 2vw, 1.65rem);
+    }
+    .preview-description {
+      max-width: 38rem;
+      margin: 0;
+      color: hsl(var(--muted-foreground));
+      font-size: 0.9rem;
+      line-height: 1.75;
+    }
+    .preview-meta,
+    .tag-list {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+    }
+    .tag-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
     }
     .cover-image {
-      display: none;
+      position: absolute;
+      inset: 0 0 0 auto;
+      width: 45%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.24;
+      mask-image: linear-gradient(to right, transparent, black);
     }
-  }
-</style>
+    @media (max-width: 640px) {
+      .detailed .preview-body {
+        padding: 1.2rem;
+      }
+      .cover-image {
+        width: 65%;
+        opacity: 0.13;
+      }
+    }
+  </style>
+</li>

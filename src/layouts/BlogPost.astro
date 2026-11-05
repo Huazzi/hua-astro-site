@@ -7,13 +7,13 @@ import 'katex/dist/katex.min.css'
 
 import MediumZoom from '@astro-pure/advanced/MediumZoom.astro'
 import ArticleBottom from '@astro-pure/pages/ArticleBottom.astro'
+import TOC from '@astro-pure/pages/TOC.astro'
 import config from 'virtual:config'
 
 import PageLayout from '@/layouts/ContentLayout.astro'
 import { Comment, PageInfo } from '@/components/comment'
 import Copyright from '@/components/pure/Copyright.astro'
 import Hero from '@/components/pure/Hero.astro'
-import TOC from '@/components/pure/TableOfContents.astro'
 
 interface Props {
   post: CollectionEntry<'blog'>

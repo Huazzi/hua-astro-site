@@ -4,133 +4,84 @@ import config from 'virtual:config'
 
 const footerConf = config.footer
 const social = footerConf.social || []
+
+const footerLink1 = footerConf.links?.filter(({ pos }) => pos === 1) || []
 ---
 
-<footer class='site-footer'>
-  <div class='footer-top'>
-    <a class='footer-signature' href='/'>{config.author}<span>.</span></a><p>
-      保持好奇，下次见。
-    </p><a class='back-top' href='#main-content'>回到顶部 <span aria-hidden='true'>↑</span></a>
-  </div>
-  <div class='footer-bottom'>
-    <div class='footer-meta'>
-      <span>{config.footer.year} {config.author}</span>{
-        footerConf.links?.map(({ title, link }) => (
-          <a href={link}>{title === 'Site Policy' ? '站点政策' : title}</a>
-        ))
-      }
-      {
-        footerConf.credits && (
-          <span class='credits'>
-            Built with{' '}
-            <a href='https://github.com/withastro/astro' target='_blank' rel='noopener noreferrer'>
-              Astro
-            </a>{' '}
-            &{' '}
-            <a
-              href='https://github.com/cworld1/astro-theme-pure'
-              target='_blank'
-              rel='noopener noreferrer'
-            >
-              Pure
+<footer class='mx-auto mb-5 mt-24 w-full'>
+  <div class='border-t pt-7'>
+    <div class='flex items-center gap-y-3 max-sm:flex-col sm:justify-between sm:gap-y-0'>
+      <div class='flex items-center gap-x-4 gap-y-2 text-muted-foreground max-sm:flex-col'>
+        {
+          footerLink1.length > 0 && (
+            <div>
+              {footerLink1.map(({ title, link, style }, index) => (
+                <>
+                  <a href={link} target='_blank' class={style}>
+                    {title}
+                  </a>
+                  {index < footerLink1.length - 1 && <span class='mx-1'>&bull;</span>}
+                </>
+              ))}
+            </div>
+          )
+        }
+        <div>
+          {config.footer.year}
+          {config.author}
+          {
+            footerConf.links && footerConf.links.length > 0 && (
+              <>
+                &
+                <span>
+                  {footerConf.links
+                    .filter(({ pos }) => pos === 2)
+                    .map(({ title, link, style }) => (
+                      <span>
+                        <a href={link} target='_blank' class={style}>
+                          {title}
+                        </a>
+                      </span>
+                    ))}
+                </span>
+              </>
+            )
+          }
+        </div>
+        {
+          footerConf.credits && (
+            <span>
+              <a href='https://github.com/withastro/astro' target='_blank'>
+                Astro
+              </a>
+              &
+              <a href='https://github.com/cworld1/astro-theme-pure' target='_blank'>
+                Pure
+              </a>
+              theme powered
+            </span>
+          )
+        }
+      </div>
+
+      <div class='flex items-center gap-x-4'>
+        {
+          social.map(({ label, href, icon }) => (
+            <a {href} rel='me' class='sl-flex'>
+              <span class='sr-only'>{label}</span>
+              <Icon name={icon} />
             </a>
-          </span>
-        )
-      }
-    </div>
-    <div class='footer-social'>
-      {
-        social.map(({ label, href, icon }) => (
-          <a {href} rel='me' aria-label={label}>
-            <>
-              <Icon name={icon} class='size-4' />
-              <span>{label}</span>
-            </>
-          </a>
-        ))
-      }
+          ))
+        }
+      </div>
     </div>
   </div>
 </footer>
+
 <style>
-  .site-footer {
-    margin-top: 70px;
-    padding-bottom: 28px;
-  }
-  .footer-top {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding-bottom: 26px;
-  }
-  .footer-signature {
-    font-size: 22px;
-    letter-spacing: -0.07em;
-    font-weight: 600;
-  }
-  .footer-signature span {
-    color: hsl(var(--primary));
-  }
-  .footer-top p {
-    font-family: 'Songti SC', SimSun, serif;
-    font-size: 14px;
-    color: hsl(var(--muted-foreground));
-  }
-  .back-top {
-    margin-left: auto;
-    font-size: 11px;
-    color: hsl(var(--muted-foreground));
-  }
-  .back-top span {
-    display: inline-block;
-    margin-left: 10px;
-    transition: transform 200ms;
-  }
-  .back-top:hover span {
-    transform: translateY(-3px);
-  }
-  .footer-bottom {
-    border-top: 1px solid hsl(var(--border));
-    padding-top: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    font-size: 10px;
-    color: hsl(var(--muted-foreground));
-  }
-  .footer-meta,
-  .footer-social {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 18px;
-  }
-  .footer-social a {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    min-height: 36px;
-  }
-  .credits {
-    font-size: 10px;
-  }
-  @media (max-width: 640px) {
-    .site-footer {
-      margin-top: 48px;
-    }
-    .footer-top {
-      gap: 12px;
-    }
-    .footer-top p {
-      font-size: 10px;
-    }
-    .footer-bottom {
-      align-items: flex-start;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .credits {
-      flex-basis: 100%;
-    }
+  footer a {
+    color: hsl(var(--foreground) / var(--un-text-opacity, 1));
+    text-decoration: underline;
+    font-weight: 500;
   }
 </style>
